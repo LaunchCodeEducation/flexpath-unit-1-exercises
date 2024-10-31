@@ -1,0 +1,5 @@
+/* Exercise: Create a hover effect on buttons using pseudo-classes */
+button:hover {
+  background-color: #555;
+  color: white;
+}

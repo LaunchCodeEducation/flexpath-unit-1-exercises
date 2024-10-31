@@ -1,0 +1,6 @@
+/* Exercise: Change text properties like font-size, color, and text-decoration */
+h1 {
+  font-size: 2.5em;
+  color: #333;
+  text-decoration: underline;
+}

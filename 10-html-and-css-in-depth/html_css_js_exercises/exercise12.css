@@ -1,0 +1,18 @@
+/* Exercise: Use relative, absolute, and fixed positioning */
+.relative-box {
+  position: relative;
+  left: 20px;
+  top: 10px;
+}
+.absolute-box {
+  position: absolute;
+  left: 50px;
+  top: 30px;
+}
+.fixed-box {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #ddd;
+  padding: 10px;
+}
