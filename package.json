@@ -4,7 +4,8 @@
   "description": "Exercises for FlexPath unit 1",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "exer-1": "node ./01-syntax-variables-data-types/exercise.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/LaunchCodeEducation/flexpath-unit-1-exercises/issues"
   },
-  "homepage": "https://github.com/LaunchCodeEducation/flexpath-unit-1-exercises#readme"
+  "homepage": "https://github.com/LaunchCodeEducation/flexpath-unit-1-exercises#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "vite": "^5.4.10"
+  }
 }
