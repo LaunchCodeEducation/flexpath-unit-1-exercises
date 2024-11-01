@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/LaunchCodeEducation/flexpath-unit-1-exercises#readme",
   "devDependencies": {
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.2",
+    "globals": "^15.11.0",
     "jest": "^29.7.0"
   },
   "dependencies": {
