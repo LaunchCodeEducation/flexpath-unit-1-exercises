@@ -344,16 +344,103 @@ export function exercise_14() {
 
   const currentDate = new Date();
   console.log("Current Date and Time: ", currentDate);
+
+  // Enter your code ABOVE this line
 }
 
-export function exercise_15() {}
+export function exercise_15() {
+  /* 
 
-export function exercise_16() {}
+  Exercise 15
 
-export function exercise_17() {}
+  Date Methods: Extract the year, month, and day from the current date using the `Date` object methods. 
+  
+  1. Create a new `Date` object and assign it to the variable 'currentDate'. 
+  2. Then, Extract the year, month, and day from the current date using the `Date` object methods. 
+       Log each of these to the console.
 
-export function exercise_18() {}
+  */
+  // CODE IN THE OPEN LINES BELOW
 
-export function exercise_19() {}
+  const currentDate = new Date();
+  console.log("Year: ", currentDate.getFullYear());
+  console.log("Month: ", currentDate.getMonth() + 1); // Months are zero-indexed
+  console.log("Day: ", currentDate.getDay());
 
-export function exercise_20() {}
+  // Enter your code ABOVE this line
+}
+
+export function exercise_16() {
+  /* 
+
+  Exercise 16
+
+  Custom Dates: 
+  
+  1. Create a `Date` object for your birthday and format it as a readable string.
+  2. Then, log it to the console
+
+
+  */
+  // CODE IN THE OPEN LINES BELOW
+
+  let birthdayString = new Date(1994, 0, 29).toDateString(); // January 29, 1994 (months are zero-indexed)
+  console.log("Birthday:", birthdayString);
+
+  // Enter your code ABOVE this line
+}
+
+export function exercise_17() {
+  /* 
+
+  Exercise 17
+
+  Date Arithmetic: 
+  
+  1. Calculate the number of days between today and 10/01/2024 using the `Date` object.
+  2. Then, log it to the console
+
+  */
+  // CODE IN THE OPEN LINES BELOW
+  let anotherDate = new Date(2024, 9, 1); // October 1, 2024
+  let timeDifference = currentDate - anotherDate;
+  let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+  console.log("Days until 2025:", Math.ceil(daysDifference));
+  // Enter your code ABOVE this line
+}
+
+export function exercise_18() {
+  const part1 = "Hello";
+  const part2 = "World";
+  /* 
+
+    Exercise 18
+
+    String Concatenation: 
+    
+    1. Concatenate two strings using both `+` operator and template literals, and compare the output
+    
+    1. Calculate the number of days between today and 10/01/2024 using the `Date` object.
+    2. Then, log it to the console
+
+  */
+  // CODE IN THE OPEN LINES BELOW
+  console.log("Using +:", part1 + " " + part2);
+  console.log("Using Template Literals:", `${part1} ${part2}`);
+}
+
+export function exercise_19() {
+  /* 
+
+    Exercise 19
+
+    Include Method: 
+    
+    1. Write a script that checks if a string includes a particular substring and logs the result.
+    
+  */
+  // CODE IN THE OPEN LINES BELOW
+  let text = "Learning JavaScript is great!";
+  console.log("Includes 'JavaScript':", text.includes("JavaScript"));
+  console.log("Includes 'Python':", text.includes("Python"));
+}
