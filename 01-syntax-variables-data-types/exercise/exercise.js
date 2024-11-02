@@ -1,3 +1,15 @@
+import { fileURLToPath } from "url";
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  // To run the code you write for each exercise, change the text below to match the name
+  // of the exercise.
+  // For Example:
+  // If I want to run exercise_05 below, I would change the text from "exercise_01" to
+  // "exercise_05", save this file, and then when I run this file with `node exercise.js`
+  // the code for exercise_05 will run
+  exercise_01();
+}
+
 export function exercise_01() {
   /* 
    
@@ -418,29 +430,41 @@ export function exercise_18() {
 
     String Concatenation: 
     
-    1. Concatenate two strings using both `+` operator and template literals, and compare the output
-    
-    1. Calculate the number of days between today and 10/01/2024 using the `Date` object.
-    2. Then, log it to the console
+
+    1. Use the `+` operator to log "Hello World" to the console using the part1 and part2 strings defined above
+    2. Then, using a template literal, log "Hello World" to the console using the part1 and part2 strings defined above
 
   */
   // CODE IN THE OPEN LINES BELOW
   console.log("Using +:", part1 + " " + part2);
   console.log("Using Template Literals:", `${part1} ${part2}`);
+  // Enter your code ABOVE this line
 }
 
 export function exercise_19() {
+  const text = "Learning JavaScript is great!";
   /* 
 
     Exercise 19
 
     Include Method: 
     
-    1. Write a script that checks if a string includes a particular substring and logs the result.
+    1. Using the String .includes() method, check to see if the 'text' variable contains the String 'JavaScript'.
+        Log the result to the console.
+    2. Then using the same method, check to see if the 'text' variable contains the String 'Python'.
+        Log the result to the console
+    3. Finally, check to see if the 'text' variable contains the specific string "javascript". It should come back false.
+       In a code comment below, explain why the includes() method return true when the string value we use is "JavaScript", 
+       but returns false when the string value we use is "javascript"
     
   */
   // CODE IN THE OPEN LINES BELOW
-  let text = "Learning JavaScript is great!";
+
   console.log("Includes 'JavaScript':", text.includes("JavaScript"));
   console.log("Includes 'Python':", text.includes("Python"));
+  console.log("Includes 'javascript':", text.includes("javascript"));
+
+  // javascript returns false because the includes() method doesn't just check the characters used,
+  //  but also the case (upper/lower) of these characters. Since "javascript" isn't the same casing as
+  //  'JavaScript' from the 'text' variable, text.includes("javascript") will return false.
 }

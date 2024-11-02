@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Exercises for FlexPath unit 1",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "exer-1": "node ./01-syntax-variables-data-types/exercise.js"
