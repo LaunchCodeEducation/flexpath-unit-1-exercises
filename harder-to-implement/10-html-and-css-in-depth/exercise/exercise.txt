@@ -1,0 +1,106 @@
+Exercise 1: Basic HTML Document Structure
+
+Description: Create a basic HTML document that includes the doctype declaration, <html>, <head>, and <body> tags. 
+Inside the <head>, add a <title> element with the text "My First HTML Page". In the <body>, include a heading level 1 (<h1>) with the text "Welcome to My Page".
+
+
+Exercise 2: Creating Paragraphs and Headings
+
+Description: Add to your HTML document from Exercise 1 by including a heading level 2 (<h2>) with the text "About Me" 
+and a paragraph (<p>) below it with some placeholder text about yourself.
+
+
+Exercise 3: Creating an Unordered List
+
+Description: Under the paragraph from Exercise 2, create an unordered list (<ul>) of your three favorite hobbies.
+
+
+Exercise 4: Inserting an Image
+
+Description: Insert an image into your HTML document below the unordered list. 
+Use the <img> tag with the src attribute pointing to an image URL of your choice. Include an alt attribute describing the image.
+
+Exercise 5: Using Semantic HTML Elements
+
+Description: Modify your HTML document to use semantic elements. Wrap your header content (<h1>) inside a <header> tag, your main content 
+inside a <main> tag, and your list of hobbies inside a <section> with a heading.
+
+
+Exercise 6: Creating a Simple Form
+Description: Below your main content, create a contact form using the <form> tag. Include input fields for "Name" and "Email" (both required), and a "Submit" button.
+
+
+Exercise 7: Linking Between Pages
+Description: Add an anchor tag (<a>) to your document that links to another page called about.html. The link text should be "Learn more about me".
+
+Exercise 8: Adding Meta Tags
+Description: In the <head> section of your HTML document, add meta tags for character encoding (UTF-8) and viewport settings for responsive design.
+
+Exercise 9: Styling Text with CSS
+Description: Using an internal CSS style in the <head> of your document, change the color of all <h1> elements to blue and set the font family to Arial.
+
+Exercise 10: Applying External CSS
+Description: Create an external CSS file named styles.css. Link it to your HTML 
+document using the <link> tag. Move the styles from the internal <style> tag to the external CSS file.
+
+Exercise 11: Understanding the CSS Box Model
+Description: Add a <div> around your main content. Use CSS to add a border, padding, and margin to the <div> to visualize the box model.
+
+Exercise 12: Background Colors and Images
+Description: Set a background color of light gray to the <body> of your document. Then, set a background image for the header section using CSS.
+
+Exercise 13: Using Class and ID Selectors
+Description: Assign a class highlight to your hobbies list items. Use CSS to set the text color to green for elements with the highlight class. 
+Also, assign an ID main-title to your main heading and set its font size to 36px using the ID selector.
+
+Exercise 14: Using Attribute Selectors
+Description: Use a CSS attribute selector to style all input elements of type text by setting their border color to blue.
+
+Exercise 15: CSS Combinators
+Description: Use a descendant selector to style all <li> elements inside the <nav> element by setting their display to inline and adding some padding.
+
+Exercise 16: Implementing Responsive Design with Media Queries
+Description: Write a media query in your CSS that changes the background color of the <body> to white when the viewport width is less than 600px.
+
+Exercise 17: Using Flexbox for Layout
+Description: Create a navigation bar using Flexbox. Inside the <nav> element, arrange the links horizontally and space them evenly across the container.
+
+Exercise 18: Creating a Grid Layout with CSS Grid
+Description: Design a simple photo gallery using CSS Grid. Display six images in a grid layout with three columns on large screens and one column on small screens.
+
+Exercise 19: Positioning Elements with CSS
+Description: Use CSS positioning to create a footer that sticks to the bottom of the viewport. Ensure that it stays at the bottom even if the content is short.
+
+Exercise 20: Adding Transitions
+Description: Add a hover effect to your navigation links that changes their background color smoothly over 0.3 seconds.
+
+Exercise 21: Using Pseudo-classes
+Description: Style all visited links on your page to have a purple color using the :visited pseudo-class.
+
+Exercise 22: Using Pseudo-elements
+Description: Use the ::after pseudo-element to add an asterisk (*) after all required input fields in your form.
+
+Exercise 23: Understanding CSS Specificity
+Description: Explain why an element with an inline style style="color: red;" will have red text even if an external CSS file sets the color to blue for that element.
+Answer:
+
+Inline styles have higher specificity than external stylesheets because they are applied directly to the element. The specificity hierarchy is:
+
+Inline styles (style attribute) – Highest specificity.
+IDs (#id selectors).
+Classes, attributes, and pseudo-classes (.class, [type="text"], :hover).
+Elements and pseudo-elements (h1, ::after).
+Therefore, the inline color: red; overrides the external CSS color: blue;.
+
+
+Exercise 24: The Cascade in CSS
+
+Description: Write CSS rules that set all paragraphs to have blue text, 
+but paragraphs inside a <section> with class highlight should have green text. 
+Ensure that the cascade and specificity result in the correct styling.
+
+
+Exercise 25: Creating a Responsive Navigation Bar
+
+Description: Build a responsive navigation bar that collapses into a hamburger menu on small screens. 
+Use HTML, CSS, and basic JavaScript if necessary.

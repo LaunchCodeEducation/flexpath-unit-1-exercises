@@ -1,0 +1,52 @@
+.container {
+  border: 2px solid black;
+  padding: 20px;
+  margin: 20px;
+}
+
+body {
+  background-color: #f0f0f0;
+}
+
+header {
+  background-image: url('header-background.jpg');
+  background-size: cover;
+  color: white;
+  padding: 50px;
+  text-align: center;
+}
+
+.highlight {
+  color: green;
+}
+
+#main-title {
+  font-size: 36px;
+}
+
+input[type="text"] {
+  border: 2px solid blue;
+}
+
+nav ul li {
+  display: inline;
+  padding: 0 10px;
+}
+
+@media (max-width: 600px) {
+  body {
+    background-color: white;
+  }
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #333;
+}
+
+.navbar a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+}
