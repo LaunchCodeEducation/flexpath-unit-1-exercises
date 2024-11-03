@@ -1,0 +1,172 @@
+Exercise 1: Creating an ES Module
+
+Description: Create a JavaScript module named mathUtils.js that 
+exports two functions: add(a, b) and multiply(a, b). Use ES Module syntax for exporting these functions.
+
+Exercise 2: Importing ES Modules
+
+Description: In a separate file named app.js, 
+import the add and multiply functions from mathUtils.js and use them to calculate and log the sum and product of 5 and 3.
+
+
+Exercise 3: Understanding CommonJS Modules
+
+Description: Create a module named stringUtils.js using CommonJS syntax that exports two functions: toUpperCase(str) and toLowerCase(str). 
+Then, import these functions in app.js using require and demonstrate their usage.
+
+
+Exercise 4: Mixing ES Modules and CommonJS
+
+Description: Explain why mixing ES Modules and CommonJS modules can lead to issues. Provide an example where importing a CommonJS module using ES Module syntax causes problems.
+Answer:
+
+Mixing ES Modules and CommonJS can lead to interoperability issues because they have different module resolution mechanisms. 
+For example, trying to import a CommonJS module using ES Module import syntax may not provide the expected exports.
+
+```
+// commonJsModule.js (CommonJS)
+module.exports = {
+  greet: function() {
+    console.log('Hello from CommonJS');
+  },
+};
+
+// app.mjs (ES Module)
+import { greet } from './commonJsModule.js'; // This may fail
+
+greet(); // Error: greet is not defined
+```
+
+To correctly import a CommonJS module in an ES Module, you may need to import the default export:
+
+```
+// Correct way
+import commonJsModule from './commonJsModule.js';
+
+commonJsModule.greet(); // Output: Hello from CommonJS
+
+```
+
+Exercise 5: Organizing Code into Separate Files
+
+Description: Given a simple application that calculates areas of shapes, organize the code into separate modules: circle.js, rectangle.js, and main.js. 
+Export the area calculation functions from each shape module and import them in main.js.
+
+Exercise 6: Initializing a Node.js Project with npm
+
+Description: Initialize a new Node.js project using npm init. 
+Set the project's name to my-app and the version to 1.0.0. Include a brief description and set the entry point to index.js.
+
+Run the following command in your terminal:
+
+```
+npm init
+
+```
+
+```
+package name: (default) my-app
+version: (default) 1.0.0
+description: A simple Node.js application
+entry point: (index.js)
+test command:
+git repository:
+keywords:
+author:
+license: (ISC)
+
+```
+
+This will create a package.json file with the provided configurations.
+
+
+Exercise 7: Installing a Third-Party Package
+
+Description: Install the chalk library using npm and use it to log a message in blue color to the console.
+
+Answer:
+
+Install chalk:
+
+```
+npm install chalk
+
+```
+
+Exercise 8: Managing Package Versions
+
+Description: Explain the difference between installing a package with ^1.0.0, ~1.0.0, and 1.0.0 in the package.json dependencies. What do these version specifiers mean?
+Answer:
+
+^1.0.0: Allows all minor and patch updates. It matches versions >=1.0.0 <2.0.0.
+~1.0.0: Allows only patch updates. It matches versions >=1.0.0 <1.1.0.
+1.0.0: Locks the dependency to exactly version 1.0.0.
+
+Exercise 9: Updating Dependencies
+
+Description: Use npm to update all outdated packages in your project to their latest versions. Show how to check for outdated packages and perform the update.
+Answer:
+
+Check for outdated packages:
+
+```
+npm outdated
+
+```
+
+Update all packages:
+```
+npm update
+
+```
+
+To update to the latest major versions (potentially breaking changes), you can use:
+```
+npm install [package-name]@latest
+
+```
+
+Or use the npm-check-updates package:
+```
+npm install -g npm-check-updates
+ncu -u
+npm install
+
+```
+
+Exercise 10: Using package.json Scripts
+
+Description: Add a script to your package.json that runs the index.js file using node. Name the script start. Demonstrate how to run this script using npm.
+Answer:
+
+In package.json, add the following under "scripts":
+
+```
+"scripts": {
+  "start": "node index.js"
+}
+
+```
+
+Run the script:
+
+```
+npm run start
+
+```
+
+Exercise 11: Reading a File with Node.js
+
+Description: Write a Node.js script that reads the contents of a file named data.txt and logs it to the console. Use the fs module's asynchronous readFile method.
+
+
+Exercise 12: Writing to a File with Node.js
+
+Description: Create a Node.js script that writes the text "Hello, file system!" to a file named output.txt. Use the fs module's writeFile method.
+
+
+Exercise 13: Appending to a File
+
+Description: Modify the previous script to append " Additional text." to the output.txt file without overwriting the existing content.
+
+
