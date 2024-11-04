@@ -1,0 +1,864 @@
+Part 1: Setting Up a Basic Vite React App
+
+Before we begin with the exercises, let's set up a basic React application using Vite. Vite is a modern frontend build tool that provides a 
+faster and leaner development experience for modern web projects. 
+It uses its own dev server rather than webpack-dev-server. However, it supports the same functionalities and is compatible with React.
+
+Step 1: Install Node.js
+
+Ensure you have Node.js installed on your system. You can download it from Node.js Official Website.
+
+Step 2: Create a New Vite Project
+
+Open your terminal and run the following command:
+
+```
+npm init vite@latest my-react-app -- --template react
+```
+
+This command initializes a new Vite project with the React template.
+
+Step 3: Navigate to the Project Directory
+```
+cd my-react-app
+
+```
+
+Step 4: Install Dependencies
+
+```
+npm install
+
+```
+
+Step 5: Run the Development Server
+
+```
+npm run dev
+
+```
+
+This will start the Vite development server. You can view your app at http://localhost:3000.
+
+
+Directory Structure:
+
+Your project structure should look like this:
+
+```
+my-react-app/
+├── index.html
+├── package.json
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── vite.config.js
+└── node_modules/
+```
+
+Part 2: 25 React Exercises to Add to the Vite App
+
+Below are 25 React exercises covering various concepts. Each exercise includes a description and code snippets that you can add to your Vite React app.
+
+Exercise 1: Creating a Functional Component
+Description: Create a simple functional component named Greeting that accepts a name prop and displays "Hello, {name}!".
+Answer:
+
+```
+// src/components/Greeting.jsx
+import React from 'react';
+
+function Greeting({ name }) {
+  return <h1>Hello, {name}!</h1>;
+}
+
+export default Greeting;
+
+```
+
+Usage in App.jsx:
+
+```
+// src/App.jsx
+import React from 'react';
+import Greeting from './components/Greeting';
+
+function App() {
+  return (
+    <div>
+      <Greeting name="Alice" />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 2: Component Hierarchy
+Description: Build a component hierarchy with a parent component Dashboard that renders child components UserProfile and UserStats.
+
+Answer:
+```
+// src/components/UserProfile.jsx
+import React from 'react';
+
+function UserProfile() {
+  return <div>User Profile Component</div>;
+}
+
+export default UserProfile;
+
+// src/components/UserStats.jsx
+import React from 'react';
+
+function UserStats() {
+  return <div>User Stats Component</div>;
+}
+
+export default UserStats;
+
+// src/components/Dashboard.jsx
+import React from 'react';
+import UserProfile from './UserProfile';
+import UserStats from './UserStats';
+
+function Dashboard() {
+  return (
+    <div>
+      <UserProfile />
+      <UserStats />
+    </div>
+  );
+}
+
+export default Dashboard;
+
+```
+
+Usage in App.jsx:
+```
+// src/App.jsx
+import React from 'react';
+import Dashboard from './components/Dashboard';
+
+function App() {
+  return (
+    <div>
+      <Dashboard />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 3: Passing Data with Props
+Description: Modify UserProfile to accept a user prop and display the user's name and age.
+
+Answer:
+```
+// src/components/UserProfile.jsx
+import React from 'react';
+
+function UserProfile({ user }) {
+  return (
+    <div>
+      <h2>Name: {user.name}</h2>
+      <p>Age: {user.age}</p>
+    </div>
+  );
+}
+
+export default UserProfile;
+
+// src/components/Dashboard.jsx
+import React from 'react';
+import UserProfile from './UserProfile';
+import UserStats from './UserStats';
+
+function Dashboard() {
+  const user = { name: 'Alice', age: 30 };
+
+  return (
+    <div>
+      <UserProfile user={user} />
+      <UserStats />
+    </div>
+  );
+}
+
+export default Dashboard;
+
+```
+
+
+Exercise 4: Using useState Hook
+Description: Create a Counter component that displays a count and has buttons to increment and decrement the count.
+
+Answer:
+
+```
+// src/components/Counter.jsx
+import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+}
+
+export default Counter;
+
+// Usage in App.jsx
+import React from 'react';
+import Counter from './components/Counter';
+
+function App() {
+  return (
+    <div>
+      <Counter />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 5: Handling State Changes
+Description: Explain how state changes in the Counter component cause re-rendering.
+Answer:
+
+When the setCount function is called (either via the increment or decrement button), it updates the count state variable. React detects this state change and re-renders 
+the Counter component to reflect the updated count value. This is how React ensures the UI stays in sync with the state.
+
+
+Exercise 6: Avoiding Prop Drilling with Context
+Description: Create a ThemeContext to manage a theme state and use it in a deeply nested component without passing props through intermediate components.
+Answer:
+
+```
+// src/context/ThemeContext.jsx
+import React from 'react';
+
+const ThemeContext = React.createContext('light');
+
+export default ThemeContext;
+
+// src/App.jsx
+import React, { useState } from 'react';
+import ThemeContext from './context/ThemeContext';
+import Dashboard from './components/Dashboard';
+
+function App() {
+  const [theme, setTheme] = useState('light');
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Dashboard />
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        Toggle Theme
+      </button>
+    </ThemeContext.Provider>
+  );
+}
+
+export default App;
+
+// src/components/DeepNestedComponent.jsx
+import React, { useContext } from 'react';
+import ThemeContext from '../context/ThemeContext';
+
+function DeepNestedComponent() {
+  const theme = useContext(ThemeContext);
+  return <div>Current Theme: {theme}</div>;
+}
+
+export default DeepNestedComponent;
+
+// Modify Dashboard to include DeepNestedComponent
+// src/components/Dashboard.jsx
+import React from 'react';
+import UserProfile from './UserProfile';
+import UserStats from './UserStats';
+import DeepNestedComponent from './DeepNestedComponent';
+
+function Dashboard() {
+  return (
+    <div>
+      <UserProfile user={{ name: 'Alice', age: 30 }} />
+      <UserStats />
+      <DeepNestedComponent />
+    </div>
+  );
+}
+
+export default Dashboard;
+
+```
+
+Exercise 7: Understanding React Context
+Description: Discuss the benefits and drawbacks of using React Context.
+Answer:
+
+Benefits:
+
+Avoids Prop Drilling: Allows passing data through the component tree without having to pass props down manually at every level.
+Global State Management: Useful for global settings like themes, locales, or authenticated user data.
+Drawbacks:
+
+Performance Issues: Every context consumer will re-render when the context value changes, which can lead to performance problems if not managed correctly.
+Complexity: Can make components less reusable and more tightly coupled to the context.
+
+Exercise 8: Using useEffect Hook
+Description: Create a Timer component that uses useEffect to update the time every second.
+Answer:
+
+```
+// src/components/Timer.jsx
+import React, { useState, useEffect } from 'react';
+
+function Timer() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timerId = setInterval(() => setTime(new Date()), 1000);
+
+    // Cleanup function
+    return () => clearInterval(timerId);
+  }, []);
+
+  return <h2>Current Time: {time.toLocaleTimeString()}</h2>;
+}
+
+export default Timer;
+
+// Usage in App.jsx
+import React from 'react';
+import Timer from './components/Timer';
+
+function App() {
+  return (
+    <div>
+      <Timer />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 9: Managing Component Lifecycle
+Description: Explain how useEffect manages the lifecycle of functional components.
+Answer:
+
+The useEffect hook allows you to perform side effects in functional components. It combines the functionality of componentDidMount, componentDidUpdate, and componentWillUnmount 
+in class components. The effect runs after the render and can optionally clean up before the component unmounts or before re-running the effect.
+
+Exercise 10: Optimizing Performance with useEffect
+Description: Modify the Timer component to prevent unnecessary re-renders by providing a dependency array to useEffect.
+Answer:
+
+In the Timer component, since we only want to set up the interval once, we provide an empty dependency array [] to useEffect:
+```
+useEffect(() => {
+  const timerId = setInterval(() => setTime(new Date()), 1000);
+  return () => clearInterval(timerId);
+}, []); // Empty array ensures effect runs only once
+
+```
+
+This prevents the effect from running on every render.
+
+Exercise 11: Creating a Higher-Order Component (HOC)
+Description: Implement an HOC named withLoading that shows a loading indicator while data is being fetched.
+
+Answer:
+
+```
+// src/hoc/withLoading.jsx
+import React, { useState, useEffect } from 'react';
+
+function withLoading(WrappedComponent, dataFetcher) {
+  return function WithLoadingComponent(props) {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+      dataFetcher().then((response) => setData(response));
+    }, []);
+
+    if (!data) {
+      return <div>Loading...</div>;
+    }
+
+    return <WrappedComponent data={data} {...props} />;
+  };
+}
+
+export default withLoading;
+
+// src/components/DataDisplay.jsx
+import React from 'react';
+
+function DataDisplay({ data }) {
+  return <div>Data: {JSON.stringify(data)}</div>;
+}
+
+export default DataDisplay;
+
+// src/App.jsx
+import React from 'react';
+import withLoading from './hoc/withLoading';
+import DataDisplay from './components/DataDisplay';
+
+function fetchData() {
+  return new Promise((resolve) =>
+    setTimeout(() => resolve({ message: 'Hello, World!' }), 2000)
+  );
+}
+
+const DataDisplayWithLoading = withLoading(DataDisplay, fetchData);
+
+function App() {
+  return (
+    <div>
+      <DataDisplayWithLoading />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 12: Benefits and Limitations of HOCs
+Description: Discuss the use cases and limitations of Higher-Order Components.
+Answer:
+
+Use Cases:
+
+Code Reusability: Share common functionality between components.
+Cross-Cutting Concerns: Handle logging, authentication, or data fetching in a centralized way.
+Limitations:
+
+Wrapper Hell: Can lead to deeply nested component hierarchies.
+Props Collision: Need to carefully manage props to avoid conflicts.
+Less Intuitive: May be harder to understand compared to hooks.
+
+Exercise 13: Implementing Error Boundaries
+Description: Create an error boundary component to catch errors in the component tree.
+Answer:
+
+```
+// src/components/ErrorBoundary.jsx
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state to show fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Log error to an error reporting service
+    console.error('ErrorBoundary caught an error', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Render fallback UI
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+
+// Usage in App.jsx
+import React from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import FaultyComponent from './components/FaultyComponent';
+
+function App() {
+  return (
+    <div>
+      <ErrorBoundary>
+        <FaultyComponent />
+      </ErrorBoundary>
+    </div>
+  );
+}
+
+export default App;
+
+// src/components/FaultyComponent.jsx
+import React from 'react';
+
+function FaultyComponent() {
+  throw new Error('I crashed!');
+  return <div>This will not render.</div>;
+}
+
+export default FaultyComponent;
+
+```
+
+Exercise 14: Debugging with React DevTools
+Description: Explain how to use React DevTools to inspect components and their state.
+Answer:
+
+React DevTools is a browser extension that allows developers to inspect the React component tree. You can:
+
+Inspect Component Hierarchy: View the tree of components rendered by React.
+Examine Props and State: See the current props and state of any component.
+Performance Profiling: Measure the performance of your components.
+
+
+Exercise 15: Diagnosing Performance Issues
+Description: Use the React Profiler to identify and optimize slow components.
+Answer:
+
+The React Profiler helps identify performance bottlenecks in applications. You can record a profiling session and see:
+
+Which Components Rendered: Identify components that re-render frequently.
+Render Times: See how long each component took to render.
+Flame Chart: Visual representation of rendering hierarchy.
+
+
+Exercise 16: Integrating Next.js
+Description: Briefly explain how to integrate Next.js for server-side rendering.
+Answer:
+
+Next.js is a React framework that enables server-side rendering and static site generation. It handles routing and offers features like:
+
+Automatic Code Splitting: Optimizes performance by splitting code into smaller chunks.
+Server-Side Rendering: Renders pages on the server for improved SEO and performance.
+Static Site Generation: Pre-renders pages at build time.
+Integration involves setting up pages in the pages directory and using Next.js-specific features like getServerSideProps.
+
+
+Exercise 17: Code Splitting with React.lazy
+Description: Implement lazy loading of components to improve performance.
+Answer:
+
+```
+// src/components/LazyComponent.jsx
+import React from 'react';
+
+function LazyComponent() {
+  return <div>This component was loaded lazily!</div>;
+}
+
+export default LazyComponent;
+
+// src/App.jsx
+import React, { Suspense, lazy } from 'react';
+
+const LazyComponent = lazy(() => import('./components/LazyComponent'));
+
+function App() {
+  return (
+    <div>
+      <h1>Main App</h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 18: Memoization with React.memo
+Description: Use React.memo to prevent unnecessary re-renders of pure components.
+Answer:
+
+```
+// src/components/PureComponent.jsx
+import React from 'react';
+
+function PureComponent({ value }) {
+  console.log('PureComponent rendered');
+  return <div>Value: {value}</div>;
+}
+
+export default React.memo(PureComponent);
+
+// src/App.jsx
+import React, { useState } from 'react';
+import PureComponent from './components/PureComponent';
+
+function App() {
+  const [count, setCount] = useState(0);
+  const value = 'Constant Value';
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Increment {count}</button>
+      <PureComponent value={value} />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+
+Exercise 19: Optimizing Expensive Calculations with useMemo
+Description: Use useMemo to memoize an expensive function.
+
+Answer:
+```
+// src/App.jsx
+import React, { useState, useMemo } from 'react';
+
+function App() {
+  const [number, setNumber] = useState(1);
+
+  const factorial = useMemo(() => {
+    console.log('Calculating factorial');
+    const computeFactorial = (n) => (n <= 1 ? 1 : n * computeFactorial(n - 1));
+    return computeFactorial(number);
+  }, [number]);
+
+  return (
+    <div>
+      <h2>Factorial of {number} is {factorial}</h2>
+      <button onClick={() => setNumber(number + 1)}>Increment Number</button>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+
+Exercise 20: Lazy Loading Routes with React Router
+Description: Implement lazy-loaded routes using React Router and React.lazy.
+Answer:
+
+```
+// src/App.jsx
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+const Home = lazy(() => import('./components/Home'));
+const About = lazy(() => import('./components/About'));
+
+function App() {
+  return (
+    <Router>
+      <Suspense fallback={<div>Loading Route...</div>}>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+        </Switch>
+      </Suspense>
+    </Router>
+  );
+}
+
+export default App;
+
+// src/components/Home.jsx
+import React from 'react';
+
+function Home() {
+  return <div>Home Page</div>;
+}
+
+export default Home;
+
+// src/components/About.jsx
+import React from 'react';
+
+function About() {
+  return <div>About Page</div>;
+}
+
+export default About;
+
+```
+
+Exercise 21: Handling Side Effects with Cleanups
+Description: Modify the Timer component to clean up the interval when the component unmounts.
+Answer:
+
+Already implemented in Exercise 8 with the cleanup function in useEffect.
+
+
+Exercise 22: Using useCallback for Function Memoization
+Description: Prevent unnecessary re-renders by memoizing event handlers with useCallback.
+Answer:
+
+```
+// src/App.jsx
+import React, { useState, useCallback } from 'react';
+import ChildComponent from './components/ChildComponent';
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  const handleClick = useCallback(() => {
+    console.log('Button clicked');
+  }, []);
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Increment {count}</button>
+      <ChildComponent onClick={handleClick} />
+    </div>
+  );
+}
+
+export default App;
+
+// src/components/ChildComponent.jsx
+import React from 'react';
+
+function ChildComponent({ onClick }) {
+  console.log('ChildComponent rendered');
+  return <button onClick={onClick}>Click Me</button>;
+}
+
+export default React.memo(ChildComponent);
+
+```
+
+Exercise 23: Custom Hooks
+Description: Create a custom hook useWindowWidth that returns the current window width.
+Answer:
+
+```
+// src/hooks/useWindowWidth.jsx
+import { useState, useEffect } from 'react';
+
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
+
+export default useWindowWidth;
+
+// Usage in App.jsx
+import React from 'react';
+import useWindowWidth from './hooks/useWindowWidth';
+
+function App() {
+  const width = useWindowWidth();
+
+  return (
+    <div>
+      <h2>Window Width: {width}px</h2>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 24: Error Handling in Event Handlers
+Description: Show how errors in event handlers do not propagate to error boundaries and how to handle them.
+Answer:
+
+Errors thrown inside event handlers do not bubble up to error boundaries. You need to handle them within the event handler, often using try-catch blocks.
+
+```
+// src/components/ErrorButton.jsx
+import React from 'react';
+
+function ErrorButton() {
+  const handleClick = () => {
+    try {
+      // Simulate error
+      throw new Error('Button click error');
+    } catch (error) {
+      console.error('Error caught in event handler:', error);
+    }
+  };
+
+  return <button onClick={handleClick}>Cause Error</button>;
+}
+
+export default ErrorButton;
+
+// Usage in App.jsx
+import React from 'react';
+import ErrorButton from './components/ErrorButton';
+
+function App() {
+  return (
+    <div>
+      <ErrorButton />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 25: Implementing Server-Side Rendering with Next.js
+Description: Set up a Next.js page that fetches data on the server side using getServerSideProps.
+
+Answer:
+
+```
+// pages/index.js
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch('https://api.example.com/data');
+  const data = await res.json();
+
+  // Pass data to the page via props
+  return { props: { data } };
+}
+
+function HomePage({ data }) {
+  return <div>Data: {JSON.stringify(data)}</div>;
+}
+
+export default HomePage;
+
+```
+
+Conclusion
+
+These exercises cover a wide range of React concepts, from basic component creation to advanced topics like context, hooks, 
+HOCs, performance optimization, and integration with Next.js. By implementing these exercises in your Vite app, you'll 
+gain practical experience with React and enhance your understanding of its core principles.
+
+Feel free to explore each exercise further, modify the code, and experiment with additional features to deepen your knowledge.
+
+Note: Remember to import and export components correctly, and ensure your file paths are accurate when adding these exercises to your Vite app.
