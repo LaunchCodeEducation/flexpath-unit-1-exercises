@@ -1,0 +1,1242 @@
+Part 1: Setting Up a Basic Vite React App
+
+Before we begin with the exercises, let's set up a basic React application using Vite. Vite is a modern frontend build tool that provides a 
+faster and leaner development experience for modern web projects. 
+It uses its own dev server rather than webpack-dev-server. However, it supports the same functionalities and is compatible with React.
+
+Step 1: Install Node.js
+
+Ensure you have Node.js installed on your system. You can download it from Node.js Official Website.
+
+Step 2: Create a New Vite Project
+
+Open your terminal and run the following command:
+
+```
+npm init vite@latest my-react-app -- --template react
+```
+
+This command initializes a new Vite project with the React template.
+
+Step 3: Navigate to the Project Directory
+```
+cd my-react-app
+
+```
+
+Step 4: Install Dependencies
+
+```
+npm install
+
+```
+
+Step 5: Run the Development Server
+
+```
+npm run dev
+
+```
+
+This will start the Vite development server. You can view your app at http://localhost:3000.
+
+
+Directory Structure:
+
+Your project structure should look like this:
+
+```
+my-react-app/
+├── index.html
+├── package.json
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── vite.config.js
+└── node_modules/
+```
+
+Part 2: 25 Data-Intensive React Exercises
+
+Below are 25 React exercises focusing on data-intensive operations, covering the specified topics. 
+Each exercise includes a description and code snippets that can be added to your React app.
+
+
+Exercise 1: Dynamic User List with Functional Components
+Description: Create a UserList functional component that fetches a list of users from an API and displays them dynamically.
+Answer:
+
+src/components/UserList.jsx
+```
+import React, { useState, useEffect } from 'react';
+
+function UserList() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Fetch users from an API
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((data) => setUsers(data))
+      .catch((error) => console.error('Error fetching users:', error));
+  }, []);
+
+  return (
+    <div>
+      <h2>User List</h2>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.name} ({user.email})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default UserList;
+
+```
+
+Usage in App.jsx:
+
+```
+import React from 'react';
+import UserList from './components/UserList';
+
+function App() {
+  return (
+    <div>
+      <UserList />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 2: Hierarchical Component Organization
+Description: Organize your components into a directory structure for better maintainability. Create src/components/users/ and move UserList.jsx into it.
+Answer:
+
+Move UserList.jsx into src/components/users/UserList.jsx.
+Updated Directory Structure:
+
+```
+src/
+├── components/
+│   └── users/
+│       └── UserList.jsx
+├── App.jsx
+└── index.jsx
+
+```
+
+Update imports accordingly:
+
+App.jsx
+
+```
+import React from 'react';
+import UserList from './components/users/UserList';
+
+function App() {
+  return (
+    <div>
+      <UserList />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 3: Managing State with useState
+Description: Create a SearchUsers component that allows users to search through the list of users by name.
+Answer:
+
+src/components/users/SearchUsers.jsx
+
+```
+import React, { useState, useEffect } from 'react';
+
+function SearchUsers() {
+  const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    // Fetch users from an API
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((data) => setUsers(data))
+      .catch((error) => console.error('Error fetching users:', error));
+  }, []);
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div>
+      <h2>Search Users</h2>
+      <input
+        type="text"
+        placeholder="Search by name..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <ul>
+        {filteredUsers.map((user) => (
+          <li key={user.id}>
+            {user.name} ({user.email})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default SearchUsers;
+
+```
+
+Usage in App.jsx:
+
+```
+import React from 'react';
+import SearchUsers from './components/users/SearchUsers';
+
+function App() {
+  return (
+    <div>
+      <SearchUsers />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 4: Complex State Management with useReducer
+Description: Implement a TodoApp component using useReducer to manage a list of todos with add, toggle, and delete functionalities.
+Answer:
+
+src/components/todos/TodoApp.jsx
+
+```
+import React, { useReducer, useState } from 'react';
+
+const initialState = [];
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'add':
+      return [...state, { id: Date.now(), text: action.text, completed: false }];
+    case 'toggle':
+      return state.map((todo) =>
+        todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
+      );
+    case 'delete':
+      return state.filter((todo) => todo.id !== action.id);
+    default:
+      throw new Error('Unknown action type');
+  }
+}
+
+function TodoApp() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [text, setText] = useState('');
+
+  return (
+    <div>
+      <h2>Todo App</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (text.trim()) {
+            dispatch({ type: 'add', text });
+            setText('');
+          }
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Add todo..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type="submit">Add</button>
+      </form>
+      <ul>
+        {state.map((todo) => (
+          <li key={todo.id}>
+            <span
+              onClick={() => dispatch({ type: 'toggle', id: todo.id })}
+              style={{
+                textDecoration: todo.completed ? 'line-through' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {todo.text}
+            </span>
+            <button onClick={() => dispatch({ type: 'delete', id: todo.id })}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default TodoApp;
+
+```
+
+Usage in App.jsx:
+
+```
+import React from 'react';
+import TodoApp from './components/todos/TodoApp';
+
+function App() {
+  return (
+    <div>
+      <TodoApp />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 5: Optimizing State Updates
+Description: Optimize the TodoApp component by using functional updates in useReducer to prevent unnecessary re-renders.
+Answer:
+
+In the reducer function, ensure that you're returning new state only when necessary. 
+Also, you can wrap the TodoItem in React.memo to prevent it from re-rendering when not necessary.
+
+src/components/todos/TodoItem.jsx
+
+```
+import React from 'react';
+
+const TodoItem = React.memo(function TodoItem({ todo, dispatch }) {
+  return (
+    <li>
+      <span
+        onClick={() => dispatch({ type: 'toggle', id: todo.id })}
+        style={{
+          textDecoration: todo.completed ? 'line-through' : 'none',
+          cursor: 'pointer',
+        }}
+      >
+        {todo.text}
+      </span>
+      <button onClick={() => dispatch({ type: 'delete', id: todo.id })}>
+        Delete
+      </button>
+    </li>
+  );
+});
+
+export default TodoItem;
+
+```
+
+Update TodoApp.jsx:
+
+```
+// Import TodoItem
+import TodoItem from './TodoItem';
+
+// Replace the list rendering with:
+<ul>
+  {state.map((todo) => (
+    <TodoItem key={todo.id} todo={todo} dispatch={dispatch} />
+  ))}
+</ul>
+
+```
+
+Exercise 6: Fetching Data with useEffect
+Description: Create a PostsList component that fetches a large list of posts from an API and displays them.
+Answer:
+
+src/components/posts/PostsList.jsx
+
+```
+import React, { useState, useEffect } from 'react';
+
+function PostsList() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    // Fetch posts from an API
+    fetch('https://jsonplaceholder.typicode.com/posts') // 100 posts
+      .then((response) => response.json())
+      .then((data) => setPosts(data))
+      .catch((error) => console.error('Error fetching posts:', error));
+  }, []);
+
+  return (
+    <div>
+      <h2>Posts List</h2>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <strong>{post.title}</strong>
+            <p>{post.body.substring(0, 100)}...</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default PostsList;
+
+```
+
+Usage in App.jsx:
+
+```
+import PostsList from './components/posts/PostsList';
+
+// In your component's render:
+<PostsList />
+
+```
+
+Exercise 7: Cleaning Up Effects
+Description: Modify the PostsList component to include a cleanup function that aborts the fetch request if the component unmounts before the data is fetched.
+Answer:
+
+Update PostsList.jsx:
+
+```
+import React, { useState, useEffect } from 'react';
+
+function PostsList() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+      signal: abortController.signal,
+    })
+      .then((response) => response.json())
+      .then((data) => setPosts(data))
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching posts:', error);
+        }
+      });
+
+    // Cleanup function
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  return (
+    <div>
+      {/* ... */}
+    </div>
+  );
+}
+
+export default PostsList;
+
+```
+
+Exercise 8: Global State Management with Context API
+Description: Implement a global theme using useContext and the Context API to manage light and dark modes.
+Answer:
+
+src/context/ThemeContext.jsx
+
+```
+import React, { createContext, useState } from 'react';
+
+export const ThemeContext = createContext();
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light');
+  const toggleTheme = () =>
+    setTheme((currentTheme) => (currentTheme === 'light' ? 'dark' : 'light'));
+
+  const value = { theme, toggleTheme };
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export default ThemeProvider;
+
+```
+
+src/components/Layout.jsx
+
+```
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+
+function Layout({ children }) {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
+  const style = {
+    backgroundColor: theme === 'light' ? '#ffffff' : '#333333',
+    color: theme === 'light' ? '#333333' : '#ffffff',
+    minHeight: '100vh',
+    padding: '20px',
+  };
+
+  return (
+    <div style={style}>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+      {children}
+    </div>
+  );
+}
+
+export default Layout;
+
+```
+
+Usage in App.jsx:
+
+```
+import React from 'react';
+import ThemeProvider from './context/ThemeContext';
+import Layout from './components/Layout';
+import PostsList from './components/posts/PostsList';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <Layout>
+        <PostsList />
+      </Layout>
+    </ThemeProvider>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 9: Implementing Error Boundaries
+Description: Create an ErrorBoundary component to catch errors in child components and display a fallback UI.
+Answer:
+
+src/components/ErrorBoundary.jsx
+
+```
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state to display fallback UI
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    // Log error to error reporting service
+    console.error('ErrorBoundary caught an error', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Fallback UI
+      return <h2>Something went wrong.</h2>;
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+
+```
+
+Usage in App.jsx:
+
+```
+import React from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import FaultyComponent from './components/FaultyComponent'; // Simulate a component that throws an error
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <FaultyComponent />
+    </ErrorBoundary>
+  );
+}
+
+export default App;
+
+```
+
+src/components/FaultyComponent.jsx
+
+```
+import React from 'react';
+
+function FaultyComponent() {
+  throw new Error('This is a simulated error');
+  return <div>This will not render.</div>;
+}
+
+export default FaultyComponent;
+
+```
+
+Exercise 10: Error Handling in Data Fetching
+Description: Enhance the PostsList component to display an error message if the data fetching fails.
+Answer:
+
+Update PostsList.jsx:
+
+```
+import React, { useState, useEffect } from 'react';
+
+function PostsList() {
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+      signal: abortController.signal,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch posts.');
+        }
+        return response.json();
+      })
+      .then((data) => setPosts(data))
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setError(error.message);
+        }
+      });
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      {/* ... */}
+    </div>
+  );
+}
+
+export default PostsList;
+
+```
+
+Exercise 11: Setting Up Routing with React Router
+Description: Install react-router-dom and set up basic routing in your app with a Home and About page.
+Answer:
+
+Install React Router:
+
+```
+npm install react-router-dom
+```
+
+Update App.jsx:
+
+```
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home';
+import About from './pages/About';
+
+function App() {
+  return (
+    <Router>
+      <nav>
+        <Link to="/">Home</Link> | <Link to="/about">About</Link>
+      </nav>
+      <hr />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+```
+
+Create Home and About pages:
+
+src/pages/Home.jsx
+
+```
+import React from 'react';
+
+function Home() {
+  return <h2>Welcome to the Home Page</h2>;
+}
+
+export default Home;
+
+```
+
+src/pages/About.jsx
+
+```
+import React from 'react';
+
+function About() {
+  return <h2>About Us</h2>;
+}
+
+export default About;
+
+```
+
+Exercise 12: Handling Route Parameters
+Description: Create a UserProfile page that displays user details based on a user ID parameter in the URL.
+Answer:
+
+src/pages/UserProfile.jsx
+
+```
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
+function UserProfile() {
+  const { userId } = useParams();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Fetch user details
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('User not found.');
+        }
+        return response.json();
+      })
+      .then((data) => setUser(data))
+      .catch((error) => console.error('Error fetching user:', error));
+  }, [userId]);
+
+  if (!user) return <div>Loading user data...</div>;
+
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <p>
+        Email: {user.email}
+        <br />
+        Phone: {user.phone}
+        <br />
+        Website: {user.website}
+      </p>
+    </div>
+  );
+}
+
+export default UserProfile;
+
+```
+
+Update App.jsx with a route:
+
+```
+// Import UserProfile
+import UserProfile from './pages/UserProfile';
+
+// Add route
+<Routes>
+  {/* ...other routes */}
+  <Route path="/users/:userId" element={<UserProfile />} />
+</Routes>
+
+```
+
+Add navigation to a user profile:
+
+```
+// In Home.jsx or any component
+import { Link } from 'react-router-dom';
+
+// Example link
+<Link to="/users/1">View User 1 Profile</Link>
+
+```
+
+Exercise 13: Using useMemo for Performance Optimization
+Description: Optimize the SearchUsers component by memoizing the filtered user list to prevent unnecessary computations.
+Answer:
+
+Update SearchUsers.jsx:
+
+```
+import React, { useState, useEffect, useMemo } from 'react';
+
+function SearchUsers() {
+  // ...previous code...
+
+  const filteredUsers = useMemo(
+    () =>
+      users.filter((user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [users, searchTerm]
+  );
+
+  // ...rest of the component...
+}
+
+export default SearchUsers;
+
+```
+
+Exercise 14: Preventing Re-renders with useCallback
+Description: In the TodoApp, prevent unnecessary re-renders of the TodoItem component by using useCallback for event handlers.
+Answer:
+
+Since the TodoItem is already memoized, pass event handlers using useCallback.
+
+Update TodoApp.jsx:
+
+```
+import React, { useReducer, useState, useCallback } from 'react';
+
+// ...previous code...
+
+function TodoApp() {
+  // ...previous code...
+
+  const toggleTodo = useCallback((id) => {
+    dispatch({ type: 'toggle', id });
+  }, []);
+
+  const deleteTodo = useCallback((id) => {
+    dispatch({ type: 'delete', id });
+  }, []);
+
+  return (
+    <div>
+      {/* ...previous code... */}
+      <ul>
+        {state.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            toggleTodo={toggleTodo}
+            deleteTodo={deleteTodo}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+```
+
+Update TodoItem.jsx:
+
+```
+const TodoItem = React.memo(function TodoItem({ todo, toggleTodo, deleteTodo }) {
+  return (
+    <li>
+      <span
+        onClick={() => toggleTodo(todo.id)}
+        style={{
+          textDecoration: todo.completed ? 'line-through' : 'none',
+          cursor: 'pointer',
+        }}
+      >
+        {todo.text}
+      </span>
+      <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+    </li>
+  );
+});
+
+export default TodoItem;
+
+```
+
+Exercise 15: Asynchronous Data Fetching with Loading States
+Description: Modify the UserProfile component to display a loading spinner while fetching user data.
+Answer:
+
+Update UserProfile.jsx:
+
+```
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+
+function UserProfile() {
+  // ...previous code...
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // ...previous code...
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      // ...previous code...
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      // ...rest of the code...
+  }, [userId]);
+
+  if (loading) return <div>Loading user data...</div>;
+
+  // ...rest of the component...
+}
+
+export default UserProfile;
+
+```
+
+Exercise 18: Creating a RESTful API with Express
+Description: Set up an Express.js server to create a RESTful API for fetching and updating data.
+Answer:
+
+Step 1: Initialize a Node.js Project
+
+```
+mkdir my-express-api
+cd my-express-api
+npm init -y
+
+```
+
+Step 2: Install Dependencies
+
+```
+npm install express cors
+
+```
+
+Step 3: Create server.js
+
+server.js
+
+```
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 5000;
+
+app.use(cors());
+app.use(express.json());
+
+// Mock data
+let users = [
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  // ...other users
+];
+
+// Get all users
+app.get('/users', (req, res) => {
+  res.json(users);
+});
+
+// Add a user
+app.post('/users', (req, res) => {
+  const newUser = { id: Date.now(), ...req.body };
+  users.push(newUser);
+  res.json(newUser);
+});
+
+// Update a user
+app.put('/users/:id', (req, res) => {
+  // ...update logic
+});
+
+// Delete a user
+app.delete('/users/:id', (req, res) => {
+  // ...delete logic
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+```
+
+Step 4: Run the Server
+
+```
+node server.js
+
+```
+
+Note: You can now fetch data from http://localhost:5000/users in your React app.
+
+Exercise 20: Implementing Infinite Scrolling
+Description: Create a PaginatedList component that fetches data in pages and implements infinite scrolling.
+Answer:
+
+src/components/PaginatedList.jsx
+
+```
+import React, { useState, useEffect, useRef } from 'react';
+
+function PaginatedList() {
+  const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const loader = useRef(null);
+
+  useEffect(() => {
+    fetch(`https://jsonplaceholder.typicode.com/posts?_limit=10&_page=${page}`)
+      .then((res) => res.json())
+      .then((data) => setItems((prev) => [...prev, ...data]))
+      .catch((err) => console.error('Error fetching items:', err));
+  }, [page]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div>
+      <h2>Paginated List</h2>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>{item.title}</li>
+        ))}
+      </ul>
+      <div ref={loader} style={{ height: '100px' }}>
+        Loading more items...
+      </div>
+    </div>
+  );
+}
+
+export default PaginatedList;
+
+```
+
+Exercise 21: Debouncing User Input
+Description: Create a DebouncedSearch component that fetches search results as the user types, with debouncing to reduce API calls.
+Answer:
+
+src/components/DebouncedSearch.jsx
+
+```
+import React, { useState, useEffect } from 'react';
+
+function DebouncedSearch() {
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedQuery(query), 500);
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  useEffect(() => {
+    if (debouncedQuery) {
+      fetch(
+        `https://api.example.com/search?query=${encodeURIComponent(debouncedQuery)}`
+      )
+        .then((res) => res.json())
+        .then((data) => setResults(data.results))
+        .catch((err) => console.error('Error fetching search results:', err));
+    } else {
+      setResults([]);
+    }
+  }, [debouncedQuery]);
+
+  return (
+    <div>
+      <h2>Debounced Search</h2>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <ul>
+        {results.map((item) => (
+          <li key={item.id}>{item.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default DebouncedSearch;
+
+```
+
+Note: Replace https://api.example.com/search with a real API endpoint.
+
+
+Exercise 22: Using WebSockets for Real-Time Data
+Description: Create a RealTimeMessages component that connects to a WebSocket server to display messages in real-time.
+Answer:
+
+src/components/RealTimeMessages.jsx
+
+```
+import React, { useState, useEffect } from 'react';
+
+function RealTimeMessages() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const socket = new WebSocket('wss://echo.websocket.org');
+
+    socket.onmessage = (event) => {
+      setMessages((prev) => [...prev, event.data]);
+    };
+
+    socket.onopen = () => {
+      socket.send('Hello WebSocket!');
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  return (
+    <div>
+      <h2>Real-Time Messages</h2>
+      <ul>
+        {messages.map((msg, index) => (
+          <li key={index}>{msg}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default RealTimeMessages;
+
+```
+
+
+Exercise 23: Implementing Optimistic UI Updates
+Description: Modify the TodoApp to optimistically update the UI when adding a todo, before the server confirms the addition.
+Answer:
+
+Assuming you have an API endpoint to add todos.
+
+Update TodoApp.jsx:
+
+```
+// In the 'add' case of the reducer, you might mark the todo as 'pending'
+case 'add':
+  return [...state, { id: action.id, text: action.text, completed: false, pending: true }];
+
+// When the server confirms, update the 'pending' status
+// This requires more complex logic and is an advanced topic.
+
+```
+
+Exercise 24: Implementing Code Splitting
+Description: Use React's lazy and Suspense to lazily load components to improve performance.
+Answer:
+
+Update App.jsx:
+
+```
+import React, { Suspense, lazy } from 'react';
+
+const PostsList = lazy(() => import('./components/posts/PostsList'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PostsList />
+    </Suspense>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 25: Using React Profiler
+Description: Use React's Profiler API to measure rendering performance.
+Answer:
+
+Wrap components with Profiler:
+
+```
+import React, { Profiler } from 'react';
+import PostsList from './components/posts/PostsList';
+
+function onRenderCallback(
+  id, // the "id" prop of the Profiler tree that has just committed
+  phase, // either "mount" (if the tree just mounted) or "update"
+  actualDuration // time spent rendering the committed update
+  // ...other parameters
+) {
+  console.log(`${id}'s ${phase} phase:`, actualDuration);
+}
+
+function App() {
+  return (
+    <Profiler id="PostsList" onRender={onRenderCallback}>
+      <PostsList />
+    </Profiler>
+  );
+}
+
+export default App;
+
+```
+
+Note: This will log rendering times to the console, helping you identify performance bottlenecks.
+
+
+Conclusion
+
+These exercises cover various advanced React concepts with a focus on data-intensive operations. 
+By implementing them, you'll gain practical experience with React components, state management, side effects, context API, 
+error handling, routing, performance optimization, asynchronous data handling, Next.js integration, and data persistence using REST APIs and tools like Prisma.
+
+Feel free to explore each exercise further, customize the code, and experiment with additional features to deepen your understanding.
+
+Note: Ensure that you handle any potential errors and edge cases as you implement these components. Also, remember to import and export 
+components correctly, and ensure your file paths are accurate when adding these exercises to your app.

@@ -1,0 +1,1286 @@
+Part 1: Setting Up a Basic Vite React App
+
+Before we begin with the exercises, let's set up a basic React application using Vite. Vite is a modern frontend build tool that provides a 
+faster and leaner development experience for modern web projects. 
+It uses its own dev server rather than webpack-dev-server. However, it supports the same functionalities and is compatible with React.
+
+Step 1: Install Node.js
+
+Ensure you have Node.js installed on your system. You can download it from Node.js Official Website.
+
+Step 2: Create a New Vite Project
+
+Open your terminal and run the following command:
+
+```
+npm init vite@latest my-react-app -- --template react
+```
+
+This command initializes a new Vite project with the React template.
+
+Step 3: Navigate to the Project Directory
+```
+cd my-react-app
+
+```
+
+Step 4: Install Dependencies
+
+```
+npm install
+
+```
+
+Step 5: Run the Development Server
+
+```
+npm run dev
+
+```
+
+This will start the Vite development server. You can view your app at http://localhost:3000.
+
+
+Directory Structure:
+
+Your project structure should look like this:
+
+```
+my-react-app/
+├── index.html
+├── package.json
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── vite.config.js
+└── node_modules/
+```
+
+Part 2: 25 React Exercises to Add to the Vite App
+
+Below are 25 React exercises covering various hooks and concepts. Each exercise includes a description and code snippets that you can add to your Vite React app.
+
+Exercise 1: Managing Local State with useState
+Description: Create a simple counter component that increments and decrements a number using the useState hook.
+Answer:
+
+```
+// src/components/Counter.jsx
+import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h2>Counter: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count - 1)}>Decrement</button>
+    </div>
+  );
+}
+
+export default Counter;
+
+```
+
+Usage in App.jsx:
+
+```
+// src/App.jsx
+import React from 'react';
+import Counter from './components/Counter';
+
+function App() {
+  return (
+    <div>
+      <Counter />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Exercise 2: Handling Side Effects with useEffect
+Description: Create a component that fetches data from a public API when it mounts using useEffect and displays the data.
+Answer:
+
+```
+// src/components/DataFetcher.jsx
+import React, { useState, useEffect } from 'react';
+
+function DataFetcher() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Fetch data when the component mounts
+    fetch('https://api.github.com/repos/facebook/react')
+      .then((response) => response.json())
+      .then((json) => setData(json))
+      .catch((error) => console.error('Error fetching data:', error));
+  }, []); // Empty dependency array ensures this runs once after initial render
+
+  if (!data) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h2>Repository: {data.full_name}</h2>
+      <p>{data.description}</p>
+      <p>⭐ Stars: {data.stargazers_count}</p>
+    </div>
+  );
+}
+
+export default DataFetcher;
+
+```
+
+Usage in App.jsx:
+
+```
+import DataFetcher from './components/DataFetcher';
+
+// In your component's render:
+<DataFetcher />
+
+```
+
+Exercise 3: Complex State Management with useReducer
+Description: Implement a counter component using the useReducer hook to manage its state, demonstrating an alternative to useState.
+Answer:
+
+```
+// src/components/ReducerCounter.jsx
+import React, { useReducer } from 'react';
+
+function ReducerCounter() {
+  const initialState = { count: 0 };
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'increment':
+        return { count: state.count + 1 };
+      case 'decrement':
+        return { count: state.count - 1 };
+      case 'reset':
+        return initialState;
+      default:
+        throw new Error('Unexpected action');
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <h2>Count: {state.count}</h2>
+      <button onClick={() => dispatch({ type: 'increment' })}>
+        Increment
+      </button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>
+        Decrement
+      </button>
+      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
+    </div>
+  );
+}
+
+export default ReducerCounter;
+
+```
+
+Usage in App.jsx:
+
+```
+import ReducerCounter from './components/ReducerCounter';
+
+// In your component's render:
+<ReducerCounter />
+
+```
+
+Exercise 4: Sharing State Without Prop Drilling Using useContext
+Description: Use the useContext hook to share a theme state across multiple components without passing props through intermediate components.
+Answer:
+
+```
+// src/context/ThemeContext.jsx
+import React from 'react';
+
+export const ThemeContext = React.createContext();
+
+// src/components/ThemeProvider.jsx
+import React, { useState } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light');
+  const toggleTheme = () =>
+    setTheme((currentTheme) => (currentTheme === 'light' ? 'dark' : 'light'));
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export default ThemeProvider;
+
+// src/components/ThemedComponent.jsx
+import React, { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+
+function ThemedComponent() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const style = {
+    background: theme === 'light' ? '#ffffff' : '#333333',
+    color: theme === 'light' ? '#333333' : '#ffffff',
+    padding: '20px',
+    textAlign: 'center',
+  };
+
+  return (
+    <div style={style}>
+      <h2>Current Theme: {theme}</h2>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+    </div>
+  );
+}
+
+export default ThemedComponent;
+
+```
+
+Usage in App.jsx:
+
+```
+import ThemeProvider from './components/ThemeProvider';
+import ThemedComponent from './components/ThemedComponent';
+
+// In your component's render:
+<ThemeProvider>
+  <ThemedComponent />
+</ThemeProvider>
+
+```
+
+Exercise 5: Referencing DOM Elements with useRef
+Description: Create a component that focuses an input field when a button is clicked using the useRef hook.
+Answer:
+
+```
+// src/components/FocusInput.jsx
+import React, { useRef } from 'react';
+
+function FocusInput() {
+  const inputRef = useRef(null);
+
+  const focusInputField = () => {
+    inputRef.current.focus();
+  };
+
+  return (
+    <div>
+      <input ref={inputRef} type="text" placeholder="Click the button to focus me" />
+      <button onClick={focusInputField}>Focus Input</button>
+    </div>
+  );
+}
+
+export default FocusInput;
+
+```
+
+Usage in App.jsx:
+
+```
+import FocusInput from './components/FocusInput';
+
+// In your component's render:
+<FocusInput />
+
+```
+
+Exercise 6: Persisting Values Across Renders with useRef
+Description: Use useRef to keep track of how many times a component has re-rendered.
+Answer:
+
+```
+// src/components/RenderCounter.jsx
+import React, { useState, useRef, useEffect } from 'react';
+
+function RenderCounter() {
+  const [count, setCount] = useState(0);
+  const renderCount = useRef(1);
+
+  useEffect(() => {
+    renderCount.current++;
+  });
+
+  return (
+    <div>
+      <h2>Render Count: {renderCount.current}</h2>
+      <button onClick={() => setCount(count + 1)}>Trigger Re-render</button>
+    </div>
+  );
+}
+
+export default RenderCounter;
+
+```
+
+Usage in App.jsx:
+
+```
+import RenderCounter from './components/RenderCounter';
+
+// In your component's render:
+<RenderCounter />
+
+```
+
+Exercise 7: Memoizing Expensive Calculations with useMemo
+Description: Create a component that performs an expensive calculation and use useMemo to optimize performance.
+Answer:
+
+```
+// src/components/ExpensiveCalculation.jsx
+import React, { useState, useMemo } from 'react';
+
+function ExpensiveCalculation() {
+  const [number, setNumber] = useState(0);
+  const [toggle, setToggle] = useState(true);
+
+  const factorial = useMemo(() => {
+    console.log('Calculating factorial...');
+    const calculateFactorial = (n) => (n <= 0 ? 1 : n * calculateFactorial(n - 1));
+    return calculateFactorial(number);
+  }, [number]);
+
+  return (
+    <div>
+      <h2>Factorial of {number}: {factorial}</h2>
+      <input
+        type="number"
+        value={number}
+        onChange={(e) => setNumber(parseInt(e.target.value) || 0)}
+      />
+      <button onClick={() => setToggle(!toggle)}>
+        Toggle State (Current: {toggle.toString()})
+      </button>
+    </div>
+  );
+}
+
+export default ExpensiveCalculation;
+
+```
+
+Usage in App.jsx:
+
+```
+import ExpensiveCalculation from './components/ExpensiveCalculation';
+
+// In your component's render:
+<ExpensiveCalculation />
+
+```
+
+Exercise 8: Memoizing Functions with useCallback
+Description: Use useCallback to prevent unnecessary re-creations of functions passed as props.
+Answer:
+
+```
+// src/components/CallbackDemo.jsx
+import React, { useState, useCallback } from 'react';
+
+function Button({ onClick, label }) {
+  console.log(`Rendering button: ${label}`);
+  return <button onClick={onClick}>{label}</button>;
+}
+
+const MemoizedButton = React.memo(Button);
+
+function CallbackDemo() {
+  const [count, setCount] = useState(0);
+
+  const increment = useCallback(() => setCount((prev) => prev + 1), []);
+  const decrement = useCallback(() => setCount((prev) => prev - 1), []);
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <MemoizedButton onClick={increment} label="Increment" />
+      <MemoizedButton onClick={decrement} label="Decrement" />
+    </div>
+  );
+}
+
+export default CallbackDemo;
+
+```
+
+Usage in App.jsx:
+
+```
+import CallbackDemo from './components/CallbackDemo';
+
+// In your component's render:
+<CallbackDemo />
+
+```
+
+Exercise 9: Building a Custom Hook for Data Fetching
+Description: Create a custom hook useFetch to encapsulate data fetching logic.
+Answer:
+
+```
+// src/hooks/useFetch.js
+import { useState, useEffect } from 'react';
+
+function useFetch(url) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((jsonData) => {
+        setData(jsonData);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+export default useFetch;
+
+```
+
+Usage in a component:
+
+```
+// src/components/CustomHookDemo.jsx
+import React from 'react';
+import useFetch from '../hooks/useFetch';
+
+function CustomHookDemo() {
+  const { data, loading, error } = useFetch('https://api.github.com/repos/facebook/react');
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div>
+      <h2>{data.full_name}</h2>
+      <p>{data.description}</p>
+    </div>
+  );
+}
+
+export default CustomHookDemo;
+
+```
+Usage in App.jsx:
+
+```
+import CustomHookDemo from './components/CustomHookDemo';
+
+// In your component's render:
+<CustomHookDemo />
+
+```
+
+
+Exercise 10: Understanding Effect Dependencies
+Description: Create a component that counts how many times a button is clicked, and use useEffect to log a message only when the count changes.
+Answer:
+
+```
+// src/components/EffectDependency.jsx
+import React, { useState, useEffect } from 'react';
+
+function EffectDependency() {
+  const [count, setCount] = useState(0);
+  const [anotherState, setAnotherState] = useState(false);
+
+  useEffect(() => {
+    console.log(`Count has changed to ${count}`);
+  }, [count]); // Effect runs only when 'count' changes
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={() => setCount((prev) => prev + 1)}>Increment Count</button>
+      <button onClick={() => setAnotherState((prev) => !prev)}>
+        Toggle Another State
+      </button>
+    </div>
+  );
+}
+
+export default EffectDependency;
+
+```
+
+Usage in App.jsx:
+
+```
+import EffectDependency from './components/EffectDependency';
+
+// In your component's render:
+<EffectDependency />
+
+```
+
+Exercise 11: Optimistic UI Updates
+Description: Implement a component that updates the UI immediately upon a user action (like adding an item to a list) before the server confirms the action.
+Answer:
+
+```
+// src/components/OptimisticUpdate.jsx
+import React, { useState } from 'react';
+
+function OptimisticUpdate() {
+  const [items, setItems] = useState(['Item 1', 'Item 2']);
+
+  const addItem = () => {
+    const newItem = `Item ${items.length + 1}`;
+    setItems((prevItems) => [...prevItems, newItem]);
+
+    // Simulate server request
+    setTimeout(() => {
+      console.log(`Server confirmed addition of ${newItem}`);
+    }, 2000);
+  };
+
+  return (
+    <div>
+      <h2>Items:</h2>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+      <button onClick={addItem}>Add Item Optimistically</button>
+    </div>
+  );
+}
+
+export default OptimisticUpdate;
+
+```
+
+Usage in App.jsx:
+
+```
+import OptimisticUpdate from './components/OptimisticUpdate';
+
+// In your component's render:
+<OptimisticUpdate />
+
+```
+
+Exercise 12: Avoiding Unnecessary Re-renders with React.memo
+Description: Use React.memo to prevent a child component from re-rendering when its props have not changed.
+Answer:
+
+```
+// src/components/ChildComponent.jsx
+import React from 'react';
+
+function ChildComponent({ name }) {
+  console.log('ChildComponent rendered');
+  return <div>Child Component - Name: {name}</div>;
+}
+
+export default React.memo(ChildComponent);
+
+// src/components/ParentComponent.jsx
+import React, { useState } from 'react';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+  const name = 'Alice';
+
+  return (
+    <div>
+      <h2>Parent Component</h2>
+      <button onClick={() => setCount((prev) => prev + 1)}>
+        Increment Count ({count})
+      </button>
+      <ChildComponent name={name} />
+    </div>
+  );
+}
+
+export default ParentComponent;
+
+```
+
+Usage in App.jsx:
+
+```
+import ParentComponent from './components/ParentComponent';
+
+// In your component's render:
+<ParentComponent />
+
+```
+
+Exercise 13: Using useReducer for Form State Management
+Description: Create a form component that uses useReducer to manage form state.
+Answer:
+
+```
+// src/components/FormWithReducer.jsx
+import React, { useReducer } from 'react';
+
+function FormWithReducer() {
+  const initialState = {
+    username: '',
+    email: '',
+    password: '',
+  };
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'SET_FIELD':
+        return { ...state, [action.field]: action.value };
+      case 'RESET':
+        return initialState;
+      default:
+        throw new Error('Unexpected action');
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const handleChange = (e) => {
+    dispatch({ type: 'SET_FIELD', field: e.target.name, value: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form submitted:', state);
+    dispatch({ type: 'RESET' });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Registration Form</h2>
+      <input
+        type="text"
+        name="username"
+        value={state.username}
+        onChange={handleChange}
+        placeholder="Username"
+      />
+      <br />
+      <input
+        type="email"
+        name="email"
+        value={state.email}
+        onChange={handleChange}
+        placeholder="Email"
+      />
+      <br />
+      <input
+        type="password"
+        name="password"
+        value={state.password}
+        onChange={handleChange}
+        placeholder="Password"
+      />
+      <br />
+      <button type="submit">Register</button>
+    </form>
+  );
+}
+
+export default FormWithReducer;
+
+```
+
+Usage in App.jsx:
+
+```
+import FormWithReducer from './components/FormWithReducer';
+
+// In your component's render:
+<FormWithReducer />
+
+```
+
+Exercise 14: Using useContext for Global State Management
+Description: Implement a simple global state using useContext and the Context API to manage user authentication status.
+Answer:
+
+```
+// src/context/AuthContext.jsx
+import React, { useState, createContext } from 'react';
+
+export const AuthContext = createContext();
+
+function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
+
+  const authData = { isAuthenticated, login, logout };
+
+  return <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>;
+}
+
+export default AuthProvider;
+
+// src/components/LoginButton.jsx
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
+function LoginButton() {
+  const { isAuthenticated, login, logout } = useContext(AuthContext);
+
+  return isAuthenticated ? (
+    <button onClick={logout}>Logout</button>
+  ) : (
+    <button onClick={login}>Login</button>
+  );
+}
+
+export default LoginButton;
+
+// src/components/AuthStatus.jsx
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
+function AuthStatus() {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  return <h2>{isAuthenticated ? 'Logged In' : 'Logged Out'}</h2>;
+}
+
+export default AuthStatus;
+
+```
+
+Usage in App.jsx:
+
+```
+import AuthProvider from './context/AuthContext';
+import AuthStatus from './components/AuthStatus';
+import LoginButton from './components/LoginButton';
+
+// In your component's render:
+<AuthProvider>
+  <AuthStatus />
+  <LoginButton />
+</AuthProvider>
+
+```
+
+Exercise 15: Understanding Context API Trade-offs
+Description: Discuss the trade-offs of using the Context API in larger applications.
+Answer:
+
+Benefits:
+
+Avoids Prop Drilling: Eliminates the need to pass props through multiple levels of components.
+Global State: Simplifies sharing of global state like themes or user data.
+Trade-offs:
+
+Performance Issues: Updates to context values can cause all consuming components to re-render, potentially leading to performance issues.
+Complexity in Large Apps: Managing multiple contexts can become complex.
+Testing Difficulty: Components that rely on context can be harder to test in isolation.
+In larger applications, it's often better to use state management libraries like Redux or MobX, or solutions like React Query for data fetching and caching.
+
+
+
+Exercise 16: Organizing Components for Scalability
+Description: Organize your components into folders based on their purpose (e.g., components, hooks, context, pages) to improve code maintainability.
+Answer:
+
+Organize your project as follows:
+
+```
+src/
+├── App.jsx
+├── index.css
+├── main.jsx
+├── components/
+│   ├── Button.jsx
+│   ├── Header.jsx
+│   └── Footer.jsx
+├── hooks/
+│   └── useFetch.js
+├── context/
+│   ├── AuthContext.jsx
+│   └── ThemeContext.jsx
+├── pages/
+│   ├── HomePage.jsx
+│   └── AboutPage.jsx
+└── assets/
+    └── logo.png
+
+```
+
+This structure helps in:
+
+Clarity: Makes it easier to find and manage files.
+Scalability: Simplifies scaling the app as it grows.
+Team Collaboration: Improves collaboration by standardizing where different types of files are located.
+
+
+Exercise 17: Handling Component Lifecycle with useEffect Cleanup
+Description: Create a component that sets up a subscription (e.g., WebSocket connection) and cleans it up when the component unmounts.
+
+Answer:
+
+```
+// src/components/WebSocketComponent.jsx
+import React, { useState, useEffect } from 'react';
+
+function WebSocketComponent() {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const socket = new WebSocket('wss://echo.websocket.org');
+
+    socket.onmessage = (event) => {
+      setMessages((prevMessages) => [...prevMessages, event.data]);
+    };
+
+    socket.onopen = () => {
+      socket.send('Hello WebSocket!');
+    };
+
+    // Cleanup function
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  return (
+    <div>
+      <h2>WebSocket Messages:</h2>
+      <ul>
+        {messages.map((msg, index) => (
+          <li key={index}>{msg}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default WebSocketComponent;
+
+```
+
+Usage in App.jsx:
+
+```
+import WebSocketComponent from './components/WebSocketComponent';
+
+// In your component's render:
+<WebSocketComponent />
+
+```
+
+Exercise 18: Implementing Infinite Scrolling with Intersection Observer
+Description: Use the Intersection Observer API with useRef and useEffect to implement infinite scrolling.
+Answer:
+
+```
+// src/components/InfiniteScrollObserver.jsx
+import React, { useState, useRef, useEffect } from 'react';
+
+function InfiniteScrollObserver() {
+  const [items, setItems] = useState(Array.from({ length: 20 }));
+  const [loading, setLoading] = useState(false);
+  const loader = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          setLoading(true);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loading]);
+
+  useEffect(() => {
+    if (loading) {
+      // Simulate fetching data
+      setTimeout(() => {
+        setItems((prev) => [...prev, ...Array.from({ length: 20 })]);
+        setLoading(false);
+      }, 1000);
+    }
+  }, [loading]);
+
+  return (
+    <div>
+      <h2>Infinite Scroll with Observer</h2>
+      <ul>
+        {items.map((_, index) => (
+          <li key={index}>Item #{index + 1}</li>
+        ))}
+      </ul>
+      <div ref={loader}>{loading && <p>Loading more items...</p>}</div>
+    </div>
+  );
+}
+
+export default InfiniteScrollObserver;
+
+```
+
+Usage in App.jsx:
+
+```
+import InfiniteScrollObserver from './components/InfiniteScrollObserver';
+
+// In your component's render:
+<InfiniteScrollObserver />
+
+```
+
+Exercise 19: Using Multiple Contexts
+Description: Demonstrate how to use multiple contexts in a component (e.g., AuthContext and ThemeContext).
+Answer:
+
+```
+// Usage in a component
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
+
+function MultiContextComponent() {
+  const { isAuthenticated } = useContext(AuthContext);
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <div>
+      <h2>User is {isAuthenticated ? 'Authenticated' : 'Not Authenticated'}</h2>
+      <h2>Current Theme: {theme}</h2>
+    </div>
+  );
+}
+
+export default MultiContextComponent;
+
+// Ensure both providers are wrapping your App
+import AuthProvider from './context/AuthContext';
+import ThemeProvider from './components/ThemeProvider';
+
+// In your App.jsx
+<AuthProvider>
+  <ThemeProvider>
+    <MultiContextComponent />
+  </ThemeProvider>
+</AuthProvider>
+
+```
+
+Exercise 20: Avoiding Pitfalls with useEffect Dependencies
+Description: Explain why including functions or objects in the useEffect dependency array can cause issues and how to fix it.
+Answer:
+
+Including functions or objects directly in the dependency array can cause the effect to run on every render because 
+functions and objects are reference types, and their references change on every render.
+
+Solution:
+
+Use useCallback for functions: Memoize functions so that their reference remains the same unless dependencies change.
+Use useMemo for objects: Memoize objects so their reference doesn't change on every render.
+Example:
+
+```
+import React, { useEffect, useCallback } from 'react';
+
+function EffectWithFunctionDependency() {
+  const callback = useCallback(() => {
+    // Do something
+  }, []); // Dependencies
+
+  useEffect(() => {
+    callback();
+  }, [callback]); // Now 'callback' has a stable reference
+
+  return <div>Check console for effect logs.</div>;
+}
+
+export default EffectWithFunctionDependency;
+
+```
+
+Exercise 21: Using useLayoutEffect
+Description: Demonstrate the use of useLayoutEffect for synchronously updating the DOM before the browser has a chance to paint.
+Answer:
+
+```
+// src/components/LayoutEffectDemo.jsx
+import React, { useState, useLayoutEffect, useRef } from 'react';
+
+function LayoutEffectDemo() {
+  const [value, setValue] = useState('Hello');
+  const divRef = useRef();
+
+  useLayoutEffect(() => {
+    const rect = divRef.current.getBoundingClientRect();
+    console.log('Div dimensions:', rect);
+  }, [value]);
+
+  return (
+    <div>
+      <div ref={divRef}>{value}</div>
+      <button onClick={() => setValue('Hello World!')}>Change Text</button>
+    </div>
+  );
+}
+
+export default LayoutEffectDemo;
+
+```
+
+Usage in App.jsx:
+
+```
+import LayoutEffectDemo from './components/LayoutEffectDemo';
+
+// In your component's render:
+<LayoutEffectDemo />
+
+```
+
+
+Exercise 22: Creating a Debounced Input with Custom Hook
+Description: Create a custom hook useDebounce and use it to debounce an input field.
+Answer:
+
+```
+// src/hooks/useDebounce.js
+import { useState, useEffect } from 'react';
+
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+export default useDebounce;
+
+// src/components/DebouncedInput.jsx
+import React, { useState } from 'react';
+import useDebounce from '../hooks/useDebounce';
+
+function DebouncedInput() {
+  const [inputValue, setInputValue] = useState('');
+  const debouncedValue = useDebounce(inputValue, 500);
+
+  return (
+    <div>
+      <h2>Debounced Input</h2>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Type something..."
+      />
+      <p>Debounced Value: {debouncedValue}</p>
+    </div>
+  );
+}
+
+export default DebouncedInput;
+
+```
+
+Usage in App.jsx:
+
+```
+import DebouncedInput from './components/DebouncedInput';
+
+// In your component's render:
+<DebouncedInput />
+
+```
+
+Exercise 23: Handling Asynchronous State Updates
+Description: Explain how state updates are batched and demonstrate updating state based on previous state using a functional update.
+Answer:
+
+State updates in React are asynchronous and may be batched for performance gains. When updating state based on the previous state, 
+you should use the functional form of setState.
+
+Example:
+
+```
+import React, { useState } from 'react';
+
+function BatchStateUpdate() {
+  const [count, setCount] = useState(0);
+
+  const incrementTwice = () => {
+    setCount((prev) => prev + 1);
+    setCount((prev) => prev + 1);
+  };
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={incrementTwice}>Increment Twice</button>
+    </div>
+  );
+}
+
+export default BatchStateUpdate;
+
+```
+
+Usage in App.jsx:
+
+```
+import BatchStateUpdate from './components/BatchStateUpdate';
+
+// In your component's render:
+<BatchStateUpdate />
+
+```
+
+Exercise 24: Using useImperativeHandle with forwardRef
+Description: Customize the instance value that is exposed to parent components when using ref.
+Answer:
+
+```
+// src/components/CustomInput.jsx
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
+
+const CustomInput = forwardRef((props, ref) => {
+  const inputRef = useRef();
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    },
+    value: () => {
+      return inputRef.current.value;
+    },
+  }));
+
+  return <input ref={inputRef} type="text" {...props} />;
+});
+
+export default CustomInput;
+
+// src/components/ImperativeHandleDemo.jsx
+import React, { useRef } from 'react';
+import CustomInput from './CustomInput';
+
+function ImperativeHandleDemo() {
+  const customInputRef = useRef();
+
+  const focusInput = () => {
+    customInputRef.current.focus();
+  };
+
+  const logValue = () => {
+    console.log('Input Value:', customInputRef.current.value());
+  };
+
+  return (
+    <div>
+      <CustomInput ref={customInputRef} placeholder="Type something..." />
+      <button onClick={focusInput}>Focus Input</button>
+      <button onClick={logValue}>Log Input Value</button>
+    </div>
+  );
+}
+
+export default ImperativeHandleDemo;
+
+```
+
+Usage in App.jsx:
+
+```
+import ImperativeHandleDemo from './components/ImperativeHandleDemo';
+
+// In your component's render:
+<ImperativeHandleDemo />
+
+```
+
+Exercise 25: Understanding Strict Mode in React
+Description: Explain what React.StrictMode does and how it can help identify potential problems in an application.
+Answer:
+
+React.StrictMode is a tool for highlighting potential problems in an application. It activates additional checks and warnings for its descendants, such as:
+
+Identifying Unsafe Lifecycles: Helps find components that use deprecated lifecycle methods.
+Warning About Side Effects: Ensures that side effects are not performed during rendering.
+Detecting Unexpected Side Effects: By intentionally double-invoking certain functions in development, it helps catch issues.
+Usage:
+
+```
+// src/main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+```
+
+Note:
+
+Development Only: React.StrictMode only runs in development mode; it does not impact the production build.
+Double Rendering: In development, certain components may render twice to detect side effects.
+
+Conclusion
+
+These exercises cover various React hooks, state management techniques, performance optimization strategies, 
+and component organization best practices. By implementing these exercises in your Vite app, you will deepen your understanding of 
+React's core concepts and improve your ability to build efficient, scalable applications.
+
+Feel free to explore each exercise further, modify the code, and experiment with additional features to enhance your learning experience.
+
+Note: Ensure that you import and export components correctly and that your file paths are accurate when adding these exercises to your 
+Vite app. Also, remember to handle any potential errors and edge cases as you implement these components.
