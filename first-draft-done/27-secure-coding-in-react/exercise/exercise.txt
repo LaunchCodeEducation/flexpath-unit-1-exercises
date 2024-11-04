@@ -1,0 +1,895 @@
+Part 1: Setting Up a Basic Vite React App
+
+Before we begin with the exercises, let's set up a basic React application using Vite. Vite is a modern frontend build tool that provides a 
+faster and leaner development experience for modern web projects. 
+It uses its own dev server rather than webpack-dev-server. However, it supports the same functionalities and is compatible with React.
+
+Step 1: Install Node.js
+
+Ensure you have Node.js installed on your system. You can download it from Node.js Official Website.
+
+Step 2: Create a New Vite Project
+
+Open your terminal and run the following command:
+
+```
+npm init vite@latest my-react-app -- --template react
+```
+
+This command initializes a new Vite project with the React template.
+
+Step 3: Navigate to the Project Directory
+```
+cd my-react-app
+
+```
+
+Step 4: Install Dependencies
+
+```
+npm install
+
+```
+
+Step 5: Run the Development Server
+
+```
+npm run dev
+
+```
+
+This will start the Vite development server. You can view your app at http://localhost:3000.
+
+
+Directory Structure:
+
+Your project structure should look like this:
+
+```
+my-react-app/
+├── index.html
+├── package.json
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── vite.config.js
+└── node_modules/
+```
+
+Exercise 1: Understanding XSS Attacks
+Description: Create a simple component that displays user-generated content, and explain how Cross-Site Scripting (XSS) can occur if not handled properly.
+Answer:
+
+```
+// src/components/UserContent.jsx
+import React from 'react';
+
+function UserContent({ content }) {
+  return (
+    <div>
+      <h2>User Content</h2>
+      <p>{content}</p>
+    </div>
+  );
+}
+
+export default UserContent;
+
+// Usage in App.jsx
+import React from 'react';
+import UserContent from './components/UserContent';
+
+function App() {
+  const userInput = '<img src=x onerror=alert("XSS Attack!") />';
+
+  return (
+    <div>
+      <UserContent content={userInput} />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+In this example, if the user input contains malicious scripts, 
+React's JSX escaping will prevent the script from executing. However, if you were to use dangerouslySetInnerHTML, it could introduce an XSS vulnerability.
+
+
+Exercise 2: Avoiding dangerouslySetInnerHTML
+Description: Demonstrate how using dangerouslySetInnerHTML can lead to XSS attacks and how to avoid it.
+Answer:
+
+```
+// src/components/UnsafeContent.jsx
+import React from 'react';
+
+function UnsafeContent({ content }) {
+  return (
+    <div>
+      <h2>Unsafe Content</h2>
+      <div dangerouslySetInnerHTML={{ __html: content }} />
+    </div>
+  );
+}
+
+export default UnsafeContent;
+
+// Usage in App.jsx
+import React from 'react';
+import UnsafeContent from './components/UnsafeContent';
+
+function App() {
+  const userInput = '<img src=x onerror=alert("XSS Attack!") />';
+
+  return (
+    <div>
+      <UnsafeContent content={userInput} />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+Using dangerouslySetInnerHTML bypasses React's built-in XSS protections. 
+To avoid XSS, you should avoid using this prop whenever possible. If you must use it, ensure the content is sanitized.
+
+
+Exercise 3: Sanitizing User Input with DOMPurify
+Description: Implement input sanitization using the dompurify library to prevent XSS attacks when rendering HTML content.
+Answer:
+
+Install dompurify:
+
+```
+npm install dompurify
+
+```
+
+Usage in the component:
+
+```
+// src/components/SafeContent.jsx
+import React from 'react';
+import DOMPurify from 'dompurify';
+
+function SafeContent({ content }) {
+  const cleanContent = DOMPurify.sanitize(content);
+
+  return (
+    <div>
+      <h2>Safe Content</h2>
+      <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
+    </div>
+  );
+}
+
+export default SafeContent;
+
+// Usage in App.jsx
+import React from 'react';
+import SafeContent from './components/SafeContent';
+
+function App() {
+  const userInput = '<img src=x onerror=alert("XSS Attack!") />';
+
+  return (
+    <div>
+      <SafeContent content={userInput} />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+By sanitizing the user input with DOMPurify, you remove any malicious scripts, 
+preventing XSS attacks even when using dangerouslySetInnerHTML.
+
+
+Exercise 4: Understanding CSRF Attacks
+Description: Explain Cross-Site Request Forgery (CSRF) and how it can affect your application when making authenticated requests.
+Answer:
+
+Explanation:
+
+CSRF attacks occur when a malicious website causes a user's browser to perform unwanted actions on a trusted site 
+where the user is authenticated. This can happen because browsers automatically include credentials like cookies with each request.
+
+To prevent CSRF, you can implement CSRF tokens, which are unique and unpredictable values associated with the user's session and verified on the server side.
+
+
+Exercise 5: Implementing CSRF Tokens in a React App
+Description: Modify your React application to include CSRF tokens in API requests using the synchronizer token pattern.
+Answer:
+
+Assuming you have an API endpoint that provides a CSRF token:
+
+```
+// src/App.jsx
+import React, { useState, useEffect } from 'react';
+
+function App() {
+  const [csrfToken, setCsrfToken] = useState('');
+
+  useEffect(() => {
+    fetch('/api/get-csrf-token')
+      .then((res) => res.json())
+      .then((data) => setCsrfToken(data.csrfToken))
+      .catch((err) => console.error('Error fetching CSRF token:', err));
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch('/api/protected-endpoint', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({ data: 'some data' }),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log('Response:', data))
+      .catch((err) => console.error('Error:', err));
+  };
+
+  return (
+    <div>
+      <h2>CSRF Protection Example</h2>
+      <button onClick={handleSubmit}>Submit Data</button>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+In this example, the CSRF token is fetched from the server 
+and included in the headers of subsequent API requests. The server should validate the token to ensure the request is legitimate.
+
+
+Exercise 6: Configuring Content Security Policy (CSP)
+Description: Configure a Content Security Policy to restrict scripts to only those from trusted sources.
+Answer:
+
+Update vite.config.js:
+
+```
+// vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    headers: {
+      'Content-Security-Policy':
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+    },
+  },
+});
+
+```
+
+Explanation:
+
+This CSP restricts scripts to be loaded only from the same origin ('self') and allows inline scripts 
+with 'unsafe-inline' (although using 'unsafe-inline' is not recommended in production). Adjust the policy to suit your security requirements.
+
+
+Exercise 7: Using Nonces in CSP
+Description: Implement CSP nonces to allow trusted inline scripts while blocking others.
+Answer:
+
+Generate a nonce in your server and pass it to your React app via a meta tag in index.html:
+
+```
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My React App with CSP Nonce</title>
+    <meta id="csp-nonce" data-nonce="{{nonce}}" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx" nonce="{{nonce}}"></script>
+  </body>
+</html>
+
+```
+
+In your server code (e.g., an Express.js server), you would replace {{nonce}} with a generated nonce and set the CSP header accordingly.
+
+Explanation:
+
+Using nonces allows you to specify which inline scripts are trusted by including a unique nonce value. 
+The CSP header would include script-src 'nonce-<nonce-value>', and only scripts with the matching nonce will execute.
+
+Exercise 8: Validating User Input
+Description: Create a form component and implement client-side validation to ensure all user inputs meet expected formats before submission.
+Answer:
+
+```
+// src/components/ValidatedForm.jsx
+import React, { useState } from 'react';
+
+function ValidatedForm() {
+  const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
+
+  const validateUsername = (name) => {
+    const isValid = /^[a-zA-Z0-9_]{3,15}$/.test(name);
+    setError(isValid ? '' : 'Username must be 3-15 characters and contain only letters, numbers, or underscores.');
+    return isValid;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateUsername(username)) {
+      // Submit the form
+      console.log('Form submitted:', username);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Validated Form</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            validateUsername(e.target.value);
+          }}
+        />
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit" disabled={!!error}>
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default ValidatedForm;
+
+// Usage in App.jsx
+import ValidatedForm from './components/ValidatedForm';
+
+function App() {
+  return (
+    <div>
+      <ValidatedForm />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+By validating user input on the client side, you provide immediate feedback to users and prevent 
+invalid data from being sent to the server. However, always perform server-side validation as well.
+
+
+Exercise 9: Preventing Sensitive Information Exposure
+Description: Ensure that sensitive information such as API keys or credentials are not exposed in your client-side code.
+Answer:
+
+Explanation:
+
+Never hard-code API keys or secrets in your frontend code.
+Use environment variables and keep them on the server side.
+For public APIs that require a key, consider using a proxy server to keep the key secret.
+Incorrect Example (Don't Do This):
+
+```
+// Exposing API key (Don't do this)
+const apiKey = 'YOUR_SECRET_API_KEY';
+
+```
+
+Correct Approach:
+
+Store sensitive information on the server.
+If using environment variables 
+in React, they must be prefixed with VITE_ (but remember, they are still exposed in the client bundle).
+
+
+Exercise 10: Managing DOM Elements Securely with useRef
+Description: Use useRef to manage DOM elements and prevent direct manipulation that could lead to security issues.
+Answer:
+
+```
+// src/components/SecureInput.jsx
+import React, { useRef } from 'react';
+
+function SecureInput() {
+  const inputRef = useRef(null);
+
+  const handleClick = () => {
+    // Only interact with DOM elements through refs
+    if (inputRef.current) {
+      inputRef.current.value = 'Secure Value';
+    }
+  };
+
+  return (
+    <div>
+      <h2>Secure Input</h2>
+      <input type="text" ref={inputRef} />
+      <button onClick={handleClick}>Set Secure Value</button>
+    </div>
+  );
+}
+
+export default SecureInput;
+
+// Usage in App.jsx
+import SecureInput from './components/SecureInput';
+
+function App() {
+  return (
+    <div>
+      <SecureInput />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+Using useRef allows you to interact with DOM elements in a controlled manner, 
+reducing the risk of unintended side effects or vulnerabilities.
+
+
+Exercise 11: Understanding Source Code Exposure
+Description: Discuss how viewing source code can lead to sensitive data exposure and how to mitigate it.
+Answer:
+
+Explanation:
+
+Issue: Client-side code can be viewed by anyone, exposing any data included in it.
+Mitigation:
+Do not include sensitive data in your frontend code.
+Use server-side code to handle sensitive operations.
+Obfuscation is not a security measure; do not rely on it.
+
+
+Exercise 12: Secure Error Handling
+Description: Implement error handling that avoids exposing sensitive information to the user.
+Answer:
+
+```
+// src/components/SecureComponent.jsx
+import React, { useState, useEffect } from 'react';
+
+function SecureComponent() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetch('/api/secure-data')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch data.');
+        }
+        return res.json();
+      })
+      .then((json) => setData(json))
+      .catch((err) => {
+        console.error('Error fetching data:', err);
+        setError('An error occurred while fetching data.');
+      });
+  }, []);
+
+  if (error) return <div>{error}</div>;
+
+  return (
+    <div>
+      <h2>Secure Data</h2>
+      {data && <p>{data.content}</p>}
+    </div>
+  );
+}
+
+export default SecureComponent;
+
+// Usage in App.jsx
+import SecureComponent from './components/SecureComponent';
+
+function App() {
+  return (
+    <div>
+      <SecureComponent />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+Error messages displayed to users should be generic and not reveal sensitive details. 
+Detailed error information should be logged on the server side for developers to review.
+
+
+Exercise 13: Secure Logging Practices
+Description: Discuss secure logging practices in client-side applications.
+Answer:
+
+Explanation:
+
+Avoid Logging Sensitive Data: Do not log personal information, tokens, or credentials.
+Asynchronous Logging: Use logging services carefully to avoid exposing data during network transmission.
+Use Log Levels: Differentiate between debug, info, warning, and error levels, and ensure that verbose logs are not exposed in production.
+
+
+Exercise 14: Lazy Loading Sensitive Components
+Description: Use lazy loading to load administrative components only when needed, reducing the risk of unauthorized access.
+Answer:
+
+```
+// src/App.jsx
+import React, { Suspense, lazy } from 'react';
+
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
+
+function App() {
+  const userRole = 'user'; // This would come from your auth logic
+
+  return (
+    <div>
+      <h2>Welcome to the App</h2>
+      {userRole === 'admin' && (
+        <Suspense fallback={<div>Loading admin panel...</div>}>
+          <AdminPanel />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+By lazy loading the AdminPanel, the code for it is not included in the initial bundle, 
+reducing the attack surface and applying the principle of least privilege.
+
+
+Exercise 15: Secure Server-Side Rendering
+Description: Explain how to secure server-side rendering (SSR) by properly handling data and avoiding template injections.
+Answer:
+
+Explanation:
+
+Avoid Injecting Unsanitized Data: When rendering content on the server, ensure that any user-generated content is properly sanitized to prevent XSS attacks.
+Use Established Frameworks: Use frameworks like Next.js that handle SSR securely.
+Content Encoding: Encode output to prevent injection attacks.
+
+
+Exercise 16: Pros and Cons of SSR for Security
+Description: Discuss the advantages and disadvantages of server-side rendering from a security perspective.
+Answer:
+
+Advantages:
+
+Control Over Content: SSR allows you to render content on the server, reducing reliance on client-side scripts.
+SEO Benefits: Search engines can index your content more effectively.
+Disadvantages:
+
+Server Load: Increased server resources are needed to render pages.
+Potential for Server-Side Vulnerabilities: If not properly secured, SSR can introduce vulnerabilities like template injections.
+
+
+
+Exercise 17: Safely Embedding JSON Data
+Description: Embed JSON data in your React app safely to prevent XSS attacks.
+Answer:
+
+```
+// src/components/EmbedJson.jsx
+import React from 'react';
+
+function EmbedJson() {
+  const data = { message: 'Hello, world!' };
+  const jsonData = JSON.stringify(data).replace(/</g, '\\u003c');
+
+  return (
+    <script
+      type="application/json"
+      id="initial-data"
+      dangerouslySetInnerHTML={{ __html: jsonData }}
+    />
+  );
+}
+
+export default EmbedJson;
+
+// Usage in index.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- ... -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Embed JSON data safely -->
+    <script type="application/json" id="initial-data">
+      {"message":"Hello, world!"}
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+```
+
+Explanation:
+
+By replacing < with \u003c, you prevent closing script tags 
+from breaking out of the script context, avoiding XSS attacks.
+
+
+Exercise 18: Avoiding XSS with Proper Data Serialization
+Description: Use proper data serialization techniques to avoid XSS when passing data from server to client.
+Answer:
+
+Explanation:
+
+Always serialize data using JSON.stringify.
+Escape characters that could break the script context.
+Do not interpolate user-generated content directly into HTML or scripts.
+
+
+Exercise 20: Continuous Security Practices
+Description: Discuss the importance of implementing continuous security practices in your development workflow.
+Answer:
+
+Explanation:
+
+Regular Audits: Regularly scan your codebase for vulnerabilities.
+Dependency Management: Keep dependencies up to date and monitor for known vulnerabilities.
+Security Training: Stay informed about common security issues and best practices.
+DevSecOps: Integrate security practices into your DevOps processes.
+
+
+Exercise 21: Sanitizing File Uploads
+Description: Implement a file upload component and discuss how to securely handle file uploads on the client side.
+Answer:
+
+```
+// src/components/FileUpload.jsx
+import React, { useState } from 'react';
+
+function FileUpload() {
+  const [fileName, setFileName] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    // Validate file type
+    if (file && file.type === 'image/png') {
+      setFileName(file.name);
+      // Proceed with file upload
+    } else {
+      alert('Only PNG images are allowed.');
+    }
+  };
+
+  return (
+    <div>
+      <h2>Secure File Upload</h2>
+      <input type="file" accept=".png" onChange={handleFileChange} />
+      {fileName && <p>Selected file: {fileName}</p>}
+    </div>
+  );
+}
+
+export default FileUpload;
+
+// Usage in App.jsx
+import FileUpload from './components/FileUpload';
+
+function App() {
+  return (
+    <div>
+      <FileUpload />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+By validating the file type on the client side, you reduce the risk of 
+users uploading malicious files. However, always perform server-side validation as well.
+
+
+Exercise 22: Securely Handling Authentication Tokens
+Description: Store authentication tokens securely in your React application.
+Answer:
+
+Explanation:
+
+Use HTTP-only Cookies: Store tokens in HTTP-only cookies to prevent access from JavaScript.
+Avoid Local Storage: Do not store sensitive tokens in localStorage or sessionStorage as they are accessible via JavaScript.
+CSRF Considerations: When using cookies, implement CSRF protection.
+
+
+Exercise 23: Implementing Rate Limiting on the Client Side
+Description: Implement a basic rate limiter to prevent brute-force attacks on login forms.
+Answer:
+
+```
+// src/components/LoginForm.jsx
+import React, { useState, useEffect } from 'react';
+
+function LoginForm() {
+  const [attempts, setAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+
+  useEffect(() => {
+    if (attempts >= 5) {
+      setIsLocked(true);
+      const timer = setTimeout(() => {
+        setAttempts(0);
+        setIsLocked(false);
+      }, 30000); // Lockout for 30 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [attempts]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isLocked) {
+      alert('Too many attempts. Please try again later.');
+      return;
+    }
+    // Perform login logic
+    // If login fails:
+    setAttempts((prev) => prev + 1);
+  };
+
+  return (
+    <div>
+      <h2>Login Form with Rate Limiting</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Username" required />
+        <br />
+        <input type="password" placeholder="Password" required />
+        <br />
+        <button type="submit" disabled={isLocked}>
+          Login
+        </button>
+      </form>
+      {isLocked && <p>Too many failed attempts. Please wait 30 seconds.</p>}
+    </div>
+  );
+}
+
+export default LoginForm;
+
+// Usage in App.jsx
+import LoginForm from './components/LoginForm';
+
+function App() {
+  return (
+    <div>
+      <LoginForm />
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+Explanation:
+
+Client-side rate limiting provides immediate feedback to users, 
+but should be supplemented with server-side rate limiting for robust security.
+
+
+Exercise 24: Avoiding Clickjacking with Framebusters
+Description: Implement a framebuster to prevent your app from being embedded in an iframe.
+Answer:
+
+Update index.html:
+
+```
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- ... -->
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+  </head>
+  <body>
+    <!-- ... -->
+  </body>
+</html>
+
+```
+
+Explanation:
+
+Setting the X-Frame-Options header to DENY prevents the app 
+from being framed, which mitigates clickjacking attacks.
+
+
+Description: Ensure your app operates in strict mode and secure contexts (HTTPS) to enhance security.
+Answer:
+
+Explanation:
+
+Strict Mode: In React, <React.StrictMode> helps identify potential problems.
+Secure Contexts:
+Serve your app over HTTPS.
+Use secure cookies (Secure, HttpOnly, and SameSite attributes).
+Ensure that all resources (scripts, styles) are loaded over HTTPS.
+Usage in main.jsx:
+
+```
+// src/main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+```
+
+Explanation:
+
+By wrapping your app in React.StrictMode, you enable additional checks and warnings for your components.
+
+
+Conclusion
+
+These exercises cover various security aspects of React applications, including XSS mitigation, CSRF prevention, 
+CSP implementation, secure handling of user input, client-side security practices, error handling, lazy loading, 
+SSR security, handling raw data, and continuous security practices.
+
+By implementing these exercises in your Vite app, you'll gain practical experience in securing React applications and 
+understanding the importance of proactive security measures.
+
+Feel free to explore each exercise further, modify the code, and experiment with additional features to enhance your understanding.
+
+Note: Ensure that you handle any potential errors and edge cases as you implement these components. Also, remember to import and export 
+components correctly, and ensure your file paths are accurate when adding these exercises to your app.
