@@ -51,6 +51,7 @@ export function exercise_03() {
   const num2 = 5;
 
   /*
+
     Exercise 3
     
     The below variables can be declared using `let` or `const`, it's up to you!
